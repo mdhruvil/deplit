@@ -1,0 +1,19 @@
+{
+  "name": "@deplit/builder",
+  "version": "0.0.1",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "lint": "eslint ."
+  },
+  "keywords": [],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "@deplit/eslint-config": "workspace:^",
+    "@deplit/typescript-config": "workspace:^",
+    "eslint": "^9.20.0",
+    "typescript": "^5.7.3"
+  }
+}

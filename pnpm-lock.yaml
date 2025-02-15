@@ -18,6 +18,21 @@ importers:
         specifier: 5.7.3
         version: 5.7.3
 
+  apps/builder:
+    devDependencies:
+      '@deplit/eslint-config':
+        specifier: workspace:^
+        version: link:../../packages/eslint-config
+      '@deplit/typescript-config':
+        specifier: workspace:^
+        version: link:../../packages/typescript-config
+      eslint:
+        specifier: ^9.20.0
+        version: 9.20.0
+      typescript:
+        specifier: ^5.7.3
+        version: 5.7.3
+
   packages/eslint-config:
     devDependencies:
       '@eslint/js':

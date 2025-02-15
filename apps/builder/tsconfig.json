@@ -1,0 +1,3 @@
+{
+  "extends": "@deplit/typescript-config/base.json"
+}
