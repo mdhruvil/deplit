@@ -1,10 +1,12 @@
 {
   "name": "@deplit/builder",
   "version": "0.0.1",
+  "type": "module",
   "description": "",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "tsx src/index.ts",
     "lint": "eslint ."
   },
   "keywords": [],
@@ -13,7 +15,15 @@
   "devDependencies": {
     "@deplit/eslint-config": "workspace:^",
     "@deplit/typescript-config": "workspace:^",
+    "@types/node": "^22.13.0",
     "eslint": "^9.20.0",
+    "tsx": "^4.19.2",
     "typescript": "^5.7.3"
+  },
+  "dependencies": {
+    "@vercel/frameworks": "^3.6.1",
+    "@vercel/fs-detectors": "^5.3.8",
+    "isomorphic-git": "^1.29.0",
+    "winston": "^3.17.0"
   }
 }
