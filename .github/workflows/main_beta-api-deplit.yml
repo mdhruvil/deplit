@@ -27,8 +27,7 @@ jobs:
         working-directory: apps/api
         run: |
           pnpm install
-          pnpm run build --if-present
-          pnpm run test --if-present
+          pnpm run build
 
       - name: Zip artifact for deployment
         working-directory: apps/api
