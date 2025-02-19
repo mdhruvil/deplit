@@ -18,6 +18,28 @@ importers:
         specifier: 5.7.3
         version: 5.7.3
 
+  apps/api:
+    dependencies:
+      '@hono/node-server':
+        specifier: ^1.13.8
+        version: 1.13.8(hono@4.7.2)
+      hono:
+        specifier: ^4.7.2
+        version: 4.7.2
+    devDependencies:
+      '@deplit/typescript-config':
+        specifier: workspace:^
+        version: link:../../packages/typescript-config
+      '@types/node':
+        specifier: ^20.11.17
+        version: 20.17.19
+      tsx:
+        specifier: ^4.7.1
+        version: 4.19.2
+      typescript:
+        specifier: ^5.7.3
+        version: 5.7.3
+
   apps/builder:
     dependencies:
       '@vercel/frameworks':
@@ -323,6 +345,12 @@ packages:
     resolution: {integrity: sha512-lB05FkqEdUg2AA0xEbUz0SnkXT1LcCTa438W4IWTUh4hdOnVbQyOJ81OrDXsJk/LSiJHubgGEFoR5EHq1NsH1A==}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
 
+  '@hono/node-server@1.13.8':
+    resolution: {integrity: sha512-fsn8ucecsAXUoVxrUil0m13kOEq4mkX4/4QozCqmY+HpGfKl74OYSn8JcMA8GnG0ClfdRI4/ZSeG7zhFaVg+wg==}
+    engines: {node: '>=18.14.1'}
+    peerDependencies:
+      hono: ^4
+
   '@humanfs/core@0.19.1':
     resolution: {integrity: sha512-5DyQ4+1JEUzejeK1JGICcideyfUbGixgS9jNgex5nqkW+cY7WZhxBigmieN5Qnw9ZosSNVC9KQKyb+GUaGyKUA==}
     engines: {node: '>=18.18.0'}
@@ -406,6 +434,9 @@ packages:
 
   '@types/minimatch@5.1.2':
     resolution: {integrity: sha512-K0VQKziLUWkVKiRVrx4a40iPaxTUefQmjtkQofBkYRcoaaL/8rhwDWww9qWbrgicNOgnpIsMxyNIUM4+n6dUIA==}
+
+  '@types/node@20.17.19':
+    resolution: {integrity: sha512-LEwC7o1ifqg/6r2gn9Dns0f1rhK+fPFDoMiceTJ6kWmVk6bgXBI/9IOWfVan4WiAavK9pIVWdX0/e3J+eEUh5A==}
 
   '@types/node@22.13.0':
     resolution: {integrity: sha512-ClIbNe36lawluuvq3+YYhnIN2CELi+6q8NpnM7PYp4hBn/TatfboPgVSm2rwKRfnV2M+Ty9GWDFI64KEe+kysA==}
@@ -1119,6 +1150,10 @@ packages:
   header-case@1.0.1:
     resolution: {integrity: sha512-i0q9mkOeSuhXw6bGgiQCCBgY/jlZuV/7dZXyZ9c6LcBrqwvT8eT719E9uxE5LiZftdl+z81Ugbg/VvXV4OJOeQ==}
 
+  hono@4.7.2:
+    resolution: {integrity: sha512-8V5XxoOF6SI12jkHkzX/6aLBMU5GEF5g387EjVSQipS0DlxWgWGSMeEayY3CRBjtTUQYwLHx9JYouWqKzy2Vng==}
+    engines: {node: '>=16.9.0'}
+
   http-proxy-agent@7.0.2:
     resolution: {integrity: sha512-T1gkAiYYDWYx3V5Bmyu7HcfcvL7mUrTWiM6yOfa3PIphViJ/gFPbvidQ+veqSOHci/PxBcDabeUNCzpOODJZig==}
     engines: {node: '>= 14'}
@@ -1707,6 +1742,8 @@ packages:
 
   rimraf@3.0.2:
     resolution: {integrity: sha512-JZkJMZkAGFFPP2YqXZXPbMlMBgsxzE8ILs4lMIX/2o0L9UBw9O/Y3o6wFw/i9YLapcUJWwqbi3kdxIPdC62TIA==}
+    deprecated: Rimraf versions prior to v4 are no longer supported
+    hasBin: true
 
   run-async@2.4.1:
     resolution: {integrity: sha512-tvVnVv01b8c1RrA6Ep7JkStj85Guv/YrMcwqYQnwjsAS2cTmmPGBBjAjpCW7RrSodNSoE2/qg9O4bceNvUuDgQ==}
@@ -2039,6 +2076,9 @@ packages:
     resolution: {integrity: sha512-nWJ91DjeOkej/TA8pXQ3myruKpKEYgqvpw9lz4OPHj/NWFNluYrjbz9j01CJ8yKQd2g4jFoOkINCTW2I5LEEyw==}
     engines: {node: '>= 0.4'}
 
+  undici-types@6.19.8:
+    resolution: {integrity: sha512-ve2KP6f/JnbPBFyobGHuerC9g1FYGn/F8n1LWTwNxCEzd6IfqTwUQcNXgEtmmQ6DlRrC1hrSrBnCZPokRrDHjw==}
+
   undici-types@6.20.0:
     resolution: {integrity: sha512-Ny6QZ2Nju20vw1SRHe3d9jVu6gJ+4e3+MMpqu7pqE5HT6WsTSlce++GQmK5UXS8mzV8DSYHrQH+Xrf2jVcuKNg==}
 
@@ -2258,6 +2298,10 @@ snapshots:
       '@eslint/core': 0.10.0
       levn: 0.4.1
 
+  '@hono/node-server@1.13.8(hono@4.7.2)':
+    dependencies:
+      hono: 4.7.2
+
   '@humanfs/core@0.19.1': {}
 
   '@humanfs/node@0.16.6':
@@ -2357,6 +2401,10 @@ snapshots:
   '@types/json-schema@7.0.15': {}
 
   '@types/minimatch@5.1.2': {}
+
+  '@types/node@20.17.19':
+    dependencies:
+      undici-types: 6.19.8
 
   '@types/node@22.13.0':
     dependencies:
@@ -3322,6 +3370,8 @@ snapshots:
     dependencies:
       no-case: 2.3.2
       upper-case: 1.1.3
+
+  hono@4.7.2: {}
 
   http-proxy-agent@7.0.2:
     dependencies:
@@ -4373,6 +4423,8 @@ snapshots:
       has-bigints: 1.1.0
       has-symbols: 1.1.0
       which-boxed-primitive: 1.1.1
+
+  undici-types@6.19.8: {}
 
   undici-types@6.20.0: {}
 
