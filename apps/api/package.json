@@ -4,10 +4,13 @@
   "scripts": {
     "dev": "tsx watch src/index.ts",
     "build": "SKIP_ENV_VALIDATION=true tsc",
-    "start": "pnpm run build && node dist/index.js"
+    "start": "pnpm run build && node dist/index.js",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "drizzle-kit migrate"
   },
   "dependencies": {
     "@hono/node-server": "^1.13.8",
+    "@libsql/client": "^0.14.0",
     "dotenv": "^16.4.7",
     "drizzle-kit": "^0.30.4",
     "drizzle-orm": "^0.39.3",

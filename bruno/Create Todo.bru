@@ -1,0 +1,17 @@
+meta {
+  name: Create Todo
+  type: http
+  seq: 3
+}
+
+post {
+  url: http://localhost:3000/todo
+  body: json
+  auth: bearer
+}
+
+body:json {
+  {
+    "title": "Hello"
+  }
+}
