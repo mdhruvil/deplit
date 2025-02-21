@@ -3,16 +3,22 @@
   "type": "module",
   "scripts": {
     "dev": "tsx watch src/index.ts",
-    "build": "tsc",
-    "start": "node dist/index.js"
+    "build": "SKIP_ENV_VALIDATION=true tsc",
+    "start": "pnpm run build && node dist/index.js"
   },
   "dependencies": {
     "@hono/node-server": "^1.13.8",
-    "hono": "^4.7.2"
+    "dotenv": "^16.4.7",
+    "drizzle-kit": "^0.30.4",
+    "drizzle-orm": "^0.39.3",
+    "hono": "^4.7.2",
+    "zod": "^3.24.2"
   },
   "devDependencies": {
+    "@deplit/eslint-config": "workspace:^",
     "@deplit/typescript-config": "workspace:^",
-    "@types/node": "^20.11.17",
+    "@types/node": "^20.17.19",
+    "eslint": "^9.20.0",
     "tsx": "^4.7.1",
     "typescript": "^5.7.3"
   }

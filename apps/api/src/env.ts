@@ -1,0 +1,35 @@
+import dotenv from "dotenv";
+import { z } from "zod";
+
+dotenv.config();
+
+const envSchema = z.object({
+  DB_URL: z.string(),
+  PORT: z.string().default("3000"),
+});
+
+function validateEnv(envVarsSchema: typeof envSchema, skipValidation: boolean) {
+  if (skipValidation) {
+    return process.env as z.infer<typeof envVarsSchema>;
+  }
+  const { data, success, error } = envVarsSchema.safeParse(process.env);
+
+  if (!success || !data) {
+    console.error("Invalid environment variables");
+    const errors = error?.flatten().fieldErrors;
+    if (!errors) {
+      console.error(error);
+      process.exit(1);
+    }
+    const formattedErrors = Object.entries(errors).map(([key, value]) => {
+      return { variable: key, "error(s)": value?.join(", ") };
+    });
+    console.table(formattedErrors);
+    process.exit(1);
+  }
+  return data;
+}
+
+const data = validateEnv(envSchema, process.env.SKIP_ENV_VALIDATION === "true");
+
+export const env = data;
