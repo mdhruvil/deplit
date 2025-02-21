@@ -29,6 +29,10 @@ jobs:
           pnpm install
           pnpm run build
 
+      - name: Remove dev dependencies
+        working-directory: apps/api
+        run: pnpm prune --prod
+
       - name: Zip artifact for deployment
         working-directory: apps/api
         run: zip release.zip ./* -r
