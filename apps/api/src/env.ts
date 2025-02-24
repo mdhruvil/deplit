@@ -6,6 +6,10 @@ dotenv.config();
 const envSchema = z.object({
   DB_URL: z.string(),
   PORT: z.string().default("3000"),
+  BETTER_AUTH_URL: z.string().url(),
+  BETTER_AUTH_SECRET: z.string(),
+  GITHUB_CLIENT_ID: z.string(),
+  GITHUB_CLIENT_SECRET: z.string(),
 });
 
 function validateEnv(envVarsSchema: typeof envSchema, skipValidation: boolean) {
