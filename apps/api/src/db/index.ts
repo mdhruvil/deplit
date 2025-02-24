@@ -1,10 +1,8 @@
-import { createClient } from "@libsql/client/node";
-import { drizzle } from "drizzle-orm/libsql";
+import { drizzle } from "drizzle-orm/node-postgres";
 import { env } from "../env.js";
 import * as schema from "./schema.js";
 
-const client = createClient({
-  url: env.DB_URL,
+export const db = drizzle({
+  connection: env.DB_URL,
+  schema,
 });
-
-export const db = drizzle({ client, schema });

@@ -7,7 +7,6 @@
       "dependsOn": ["^build"],
       "inputs": ["$TURBO_DEFAULT$", ".env*"],
       "outputs": [".dist/**"],
-
       "env": ["SKIP_ENV_VALIDATION"]
     },
     "lint": {
@@ -17,6 +16,10 @@
       "dependsOn": ["^check-types"]
     },
     "dev": {
+      "cache": false,
+      "persistent": true
+    },
+    "db:studio": {
       "cache": false,
       "persistent": true
     }

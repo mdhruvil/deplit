@@ -6,21 +6,23 @@
     "build": "SKIP_ENV_VALIDATION=true tsc",
     "start": "pnpm run build && node dist/index.js",
     "db:generate": "drizzle-kit generate",
-    "db:migrate": "drizzle-kit migrate"
+    "db:migrate": "drizzle-kit migrate",
+    "db:studio": "drizzle-kit studio"
   },
   "dependencies": {
     "@hono/node-server": "^1.13.8",
-    "@libsql/client": "^0.14.0",
     "dotenv": "^16.4.7",
-    "drizzle-kit": "^0.30.4",
     "drizzle-orm": "^0.39.3",
     "hono": "^4.7.2",
+    "pg": "^8.13.3",
     "zod": "^3.24.2"
   },
   "devDependencies": {
     "@deplit/eslint-config": "workspace:^",
     "@deplit/typescript-config": "workspace:^",
     "@types/node": "^20.17.19",
+    "@types/pg": "^8.11.11",
+    "drizzle-kit": "^0.30.4",
     "esbuild": "^0.25.0",
     "eslint": "^9.20.0",
     "tsx": "^4.7.1",
