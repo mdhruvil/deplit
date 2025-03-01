@@ -8,21 +8,21 @@ import { cloneRepo } from "./git.js";
 import { mapUrlToFilePath } from "./postprocess.js";
 import { logger } from "./utils/loggers.js";
 
-// const DESTINATION = "/home/dhruvil/Downloads/deplit/temp-" + Date.now();
-const DESTINATION = "/home/dhruvil/Dhruvil/code/deplit-tests/ts-router-spa";
+const DESTINATION = "/home/dhruvil/Downloads/deplit/temp-" + Date.now();
+// const DESTINATION = "/home/dhruvil/Dhruvil/code/deplit-tests/ts-router-spa";
 const gitUrl = "https://github.com/mdhruvil/mdhruvil.github.io";
 const branch = "main";
 
 async function main() {
-  // logger.info(`Cloning ${gitUrl} (Branch: ${branch})`);
-  // await cloneRepo({ url: gitUrl, dest: DESTINATION, ref: branch }).catch(
-  //   (err) => {
-  //     logger.error("Cloning failed.", err);
-  //     process.exit(1);
-  //   },
-  // );
+  logger.info(`Cloning ${gitUrl} (Branch: ${branch})`);
+  await cloneRepo({ url: gitUrl, dest: DESTINATION, ref: branch }).catch(
+    (err) => {
+      logger.error("Cloning failed.", err);
+      process.exit(1);
+    },
+  );
 
-  // logger.info("Cloning completed.");
+  logger.info("Cloning completed.");
 
   const framework = await detectFramework(DESTINATION);
   if (!framework) {

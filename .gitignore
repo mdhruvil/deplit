@@ -48,3 +48,4 @@ __azurite_db*__.json
 # all sqlite dbs
 *.sqlite
 *.db
+.aider*
