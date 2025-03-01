@@ -6,8 +6,8 @@
 - [x] use `vercel build` to build the project and get the static output
 - [x] map the static `.html` files to the routes
 - [ ] create a schema for the backend db (gpt)
-- [ ] dockerize the `builder` and also decide the dev workflow
-- [ ] upload build the artifacts to the azure blob storage
+- [x] dockerize the `builder` and also decide the dev workflow
+- [x] upload build the artifacts to the azure blob storage
   - [ ] create a api route to get the SAS url to upload the artifacts
 - [ ] stream the build logs to the azure web pub/sub
   - [ ] create a api route to get pub/sub client url
