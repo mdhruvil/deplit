@@ -32,13 +32,14 @@ const notInfoFilter = winston.format((info) =>
 );
 
 const jsonMessage = winston.format((info) => {
-  try {
+  if (typeof info.message === "object") {
     info.message = JSON.stringify(info.message, undefined, 2);
-    return info;
-  } catch {
-    return info;
   }
+  return info;
 });
+
+const logFileDest =
+  process.env.LOG_FILE_DEST ?? "/home/dhruvil/Downloads/deplit/build.log";
 
 /**
  * winston logger with custom `local` level
@@ -69,7 +70,7 @@ export const logger = winston.createLogger({
       ),
     }),
     new winston.transports.File({
-      filename: "logs/build.log",
+      filename: logFileDest,
       format: winston.format.combine(
         notInfoFilter(),
         winston.format.timestamp(),
