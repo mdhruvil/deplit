@@ -1,9 +1,9 @@
-name: Build and deploy
+name: Build and deploy Deplit API
 
 on:
-  push:
-    branches:
-      - main
+  # push:
+  #   branches:
+  #     - main
   workflow_dispatch:
 
 jobs:
