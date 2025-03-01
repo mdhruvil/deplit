@@ -121,6 +121,9 @@ importers:
 
   apps/controlplane:
     dependencies:
+      '@fontsource-variable/inter':
+        specifier: ^5.2.0
+        version: 5.2.0
       '@radix-ui/react-slot':
         specifier: ^1.1.2
         version: 1.1.2(@types/react@19.0.8)(react@19.0.0)
@@ -1102,6 +1105,9 @@ packages:
   '@eslint/plugin-kit@0.2.5':
     resolution: {integrity: sha512-lB05FkqEdUg2AA0xEbUz0SnkXT1LcCTa438W4IWTUh4hdOnVbQyOJ81OrDXsJk/LSiJHubgGEFoR5EHq1NsH1A==}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
+
+  '@fontsource-variable/inter@5.2.0':
+    resolution: {integrity: sha512-JKtSEgBxbNKnF4+o+yEgkiW95ZOkgds1PO+NRO4+t1vrQdCb/Q/Um5seBKFFVzZ+HDx0JQfCioIme7Blsm++OQ==}
 
   '@hexagon/base64@1.1.28':
     resolution: {integrity: sha512-lhqDEAvWixy3bZ+UOYbPwUbBkwBq5C1LAJ/xPC8Oi+lL54oyakv/npbA0aU2hgCsx/1NUd4IBvV03+aUBWxerw==}
@@ -5025,6 +5031,8 @@ snapshots:
     dependencies:
       '@eslint/core': 0.10.0
       levn: 0.4.1
+
+  '@fontsource-variable/inter@5.2.0': {}
 
   '@hexagon/base64@1.1.28': {}
 

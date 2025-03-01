@@ -2,6 +2,10 @@
 
 @plugin "tailwindcss-animate";
 
+body {
+  font-family: "Inter Variable", sans-serif;
+}
+
 @custom-variant dark (&:is(.dark *));
 
 :root {
