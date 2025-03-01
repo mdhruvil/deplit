@@ -43,7 +43,6 @@ export async function mapUrlToFilePath(
   htmlRoutes: Record<string, string>;
   assetsRoutes: Record<string, string>;
 }> {
-  console.log({ baseDir, currentDir });
   const htmlRoutes: Record<string, string> = {};
   const assetsRoutes: Record<string, string> = {};
   const items = await fs.readdir(currentDir, { withFileTypes: true });

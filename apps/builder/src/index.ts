@@ -10,11 +10,11 @@ import { mapUrlToFilePath } from "./postprocess.js";
 import { logger } from "./utils/loggers.js";
 import { uploadDirRecursively } from "./upload.js";
 
-const cloneDest = "/home/dhruvil/Downloads/deplit/temp";
-const outDir = "/home/dhruvil/Downloads/deplit/out";
+const cloneDest = process.env.WORK_DIR ?? "/home/dhruvil/Downloads/deplit/temp";
+const outDir = process.env.OUTPUT_DIR ?? "/home/dhruvil/Downloads/deplit/out";
 
 const gitUrl =
-  process.env.REPO_URL ?? "https://github.com/mdhruvil/mdhruvil.github.io";
+  process.env.REPO_URL ?? "https://github.com/nextjs/deploy-github-pages.git";
 
 const branch = process.env.BRANCH ?? "main";
 
