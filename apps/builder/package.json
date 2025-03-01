@@ -15,15 +15,19 @@
   "devDependencies": {
     "@deplit/eslint-config": "workspace:^",
     "@deplit/typescript-config": "workspace:^",
+    "@types/mime-types": "^2.1.4",
     "@types/node": "^22.13.0",
     "eslint": "^9.20.0",
     "tsx": "^4.19.2",
     "typescript": "^5.7.3"
   },
   "dependencies": {
+    "@azure/identity": "^4.7.0",
+    "@azure/storage-blob": "^12.26.0",
     "@vercel/frameworks": "^3.6.1",
     "@vercel/fs-detectors": "^5.3.8",
     "isomorphic-git": "^1.29.0",
+    "mime-types": "^2.1.35",
     "winston": "^3.17.0"
   }
 }

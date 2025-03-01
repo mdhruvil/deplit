@@ -17,3 +17,23 @@ export async function cloneRepo({ url, dest, ref }: CloneRepoArgs) {
     ref,
   });
 }
+
+type GetLatestCommitObjectIdArgs = {
+  dest: string;
+  ref: string;
+};
+export async function getLatestCommitObjectId({
+  ref,
+  dest,
+}: GetLatestCommitObjectIdArgs) {
+  const commit = await git.log({
+    fs,
+    dir: dest,
+    depth: 1,
+    ref,
+  });
+  if (commit.length === 0 || !commit[0]?.oid) {
+    throw new Error("No commits found");
+  }
+  return commit[0].oid;
+}

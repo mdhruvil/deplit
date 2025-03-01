@@ -27,8 +27,8 @@ const customLevels = {
     local: "dim green",
   },
 };
-const notInfoFilter = winston.format((info) =>
-  info.level !== "local" ? info : false,
+const notLocalFilter = winston.format((info) =>
+  info.level === "local" ? false : info,
 );
 
 const jsonMessage = winston.format((info) => {
@@ -72,7 +72,7 @@ export const logger = winston.createLogger({
     new winston.transports.File({
       filename: logFileDest,
       format: winston.format.combine(
-        notInfoFilter(),
+        notLocalFilter(),
         winston.format.timestamp(),
         winston.format.json(),
       ),

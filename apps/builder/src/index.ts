@@ -5,29 +5,36 @@ import {
   detectFramework,
   runVercelBuild,
 } from "./build.js";
-import { cloneRepo } from "./git.js";
+import { cloneRepo, getLatestCommitObjectId } from "./git.js";
 import { mapUrlToFilePath } from "./postprocess.js";
 import { logger } from "./utils/loggers.js";
+import { uploadDirRecursively } from "./upload.js";
 
 const cloneDest = "/home/dhruvil/Downloads/deplit/temp";
 const outDir = "/home/dhruvil/Downloads/deplit/out";
 
 const gitUrl =
   process.env.REPO_URL ?? "https://github.com/mdhruvil/mdhruvil.github.io";
+
 const branch = process.env.BRANCH ?? "main";
+
+export const projectId = process.env.PROJECT_ID ?? "project-1";
+
+export let latestCommitObjectId: string | undefined;
 
 async function cleanDest(dest: string) {
   try {
     await fs.rm(dest, { recursive: true, force: true });
     await fs.mkdir(dest, { recursive: true });
-    logger.info(`Cleaned workspace: ${dest}`);
+    logger.info(`Cleaned directory: ${dest}`);
   } catch (err) {
-    logger.warn(`Error cleaning workspace: ${err}`);
+    logger.warn(`Error cleaning directory: ${err}`);
   }
 }
 
 async function main() {
   await cleanDest(cloneDest);
+  await cleanDest(outDir);
 
   logger.info(`Cloning ${gitUrl} (Branch: ${branch})`);
   await cloneRepo({ url: gitUrl, dest: cloneDest, ref: branch }).catch(
@@ -37,6 +44,14 @@ async function main() {
     },
   );
   logger.info("Cloning completed.");
+
+  latestCommitObjectId = await getLatestCommitObjectId({
+    dest: cloneDest,
+    ref: branch,
+  }).catch((err) => {
+    logger.error("Failed to get latest commit object id.", err);
+    process.exit(1);
+  });
 
   const framework = await detectFramework(cloneDest);
   if (!framework) {
@@ -78,6 +93,14 @@ async function main() {
 
   console.table(htmlRoutes);
   console.table(assetsRoutes);
+
+  logger.local("Uploading files to Azure Blob Storage...");
+  await uploadDirRecursively({
+    localCurrentDirPath: outDir,
+  }).catch((err) => {
+    logger.local("Failed to upload files to Azure Blob Storage.", err);
+    process.exit(1);
+  });
 }
 
 main();

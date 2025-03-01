@@ -1,4 +1,4 @@
-import { readdir } from "fs/promises";
+import fs from "fs/promises";
 import path from "path";
 
 /**
@@ -43,9 +43,10 @@ export async function mapUrlToFilePath(
   htmlRoutes: Record<string, string>;
   assetsRoutes: Record<string, string>;
 }> {
+  console.log({ baseDir, currentDir });
   const htmlRoutes: Record<string, string> = {};
   const assetsRoutes: Record<string, string> = {};
-  const items = await readdir(currentDir, { withFileTypes: true });
+  const items = await fs.readdir(currentDir, { withFileTypes: true });
 
   for (const item of items) {
     const fullPath = path.join(currentDir, item.name);
@@ -58,6 +59,7 @@ export async function mapUrlToFilePath(
       Object.assign(assetsRoutes, nestedAssetsRoutes);
     } else if (item.isFile()) {
       const relativeFilePath = path.relative(baseDir, fullPath);
+
       const route = getRoute(relativeFilePath);
 
       if (
