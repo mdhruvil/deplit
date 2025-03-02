@@ -10,6 +10,8 @@ const envSchema = z.object({
   BETTER_AUTH_SECRET: z.string(),
   GITHUB_CLIENT_ID: z.string(),
   GITHUB_CLIENT_SECRET: z.string(),
+
+  CONTROL_PANE_URL: z.string().url().default("http://localhost:5173"),
 });
 
 function validateEnv(envVarsSchema: typeof envSchema, skipValidation: boolean) {

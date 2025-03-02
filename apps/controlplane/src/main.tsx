@@ -7,7 +7,7 @@ import "./index.css";
 import "@fontsource-variable/inter";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
-const queryClient = new QueryClient();
+export const queryClient = new QueryClient();
 
 // Set up a Router instance
 const router = createRouter({

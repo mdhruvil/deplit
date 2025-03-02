@@ -2,10 +2,23 @@ import { Hono } from "hono";
 import { db } from "./db/index.js";
 import { todo } from "./db/schema.js";
 import { auth } from "./lib/auth.js";
+import { cors } from "hono/cors";
+import { env } from "./env.js";
 
 export const app = new Hono({ strict: false })
   .basePath("/api")
+  .use(
+    "/auth/**", // or replace with "*" to enable cors for all routes
+    cors({
+      origin: env.CONTROL_PANE_URL,
+      allowHeaders: ["Content-Type", "Authorization"],
+      exposeHeaders: ["Content-Length"],
+      maxAge: 600,
+      credentials: true,
+    }),
+  )
   .on(["POST", "GET"], "/auth/**", (c) => auth.handler(c.req.raw))
+  .get("/auth-redirect", (c) => c.redirect(`${env.CONTROL_PANE_URL}/profile`))
   .get("/todo", async (c) => {
     const todos = await db.query.todo.findMany();
     return c.json({ message: "OK!", todos });

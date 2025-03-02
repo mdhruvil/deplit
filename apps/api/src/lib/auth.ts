@@ -16,5 +16,10 @@ export const auth = betterAuth({
       clientSecret: env.GITHUB_CLIENT_SECRET,
     },
   },
-  plugins: [],
+  trustedOrigins: [env.CONTROL_PANE_URL],
+  onAPIError: {
+    onError(error, ctx) {
+      console.error(error, ctx);
+    },
+  },
 });
