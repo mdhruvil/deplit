@@ -1,4 +1,4 @@
-import { sql } from "drizzle-orm";
+import { relations, sql } from "drizzle-orm";
 import {
   boolean,
   integer,
@@ -34,10 +34,15 @@ export const user = pgTable("user", {
   updatedAt: timestamp("updated_at").notNull(),
 });
 
+export const userRelations = relations(user, ({ many }) => ({
+  projects: many(projects),
+}));
+
 export const projects = pgTable("projects", {
   id: uuid("id")
     .primaryKey()
-    .default(sql`uuid_generate_v4()`),
+    .default(sql`uuid_generate_v4()`)
+    .notNull(),
   slug: text("slug").notNull().unique(),
   name: text("name").notNull(),
   githubUrl: text("github_url").notNull(),
@@ -47,10 +52,16 @@ export const projects = pgTable("projects", {
   ...timestamps,
 });
 
+export const projectRelations = relations(projects, ({ one, many }) => ({
+  creator: one(user, { fields: [projects.creatorId], references: [user.id] }),
+  deployments: many(deployments),
+}));
+
 export const deployments = pgTable("deployments", {
   id: uuid("id")
     .primaryKey()
-    .default(sql`uuid_generate_v4()`),
+    .default(sql`uuid_generate_v4()`)
+    .notNull(),
   projectId: uuid("project_id")
     .notNull()
     .references(() => projects.id, { onDelete: "cascade" }),
@@ -89,6 +100,13 @@ export const deployments = pgTable("deployments", {
    */
   metadata: json("metadata").$type<Record<string, string>>(),
 });
+
+export const deploymentRelations = relations(deployments, ({ one }) => ({
+  project: one(projects, {
+    fields: [deployments.projectId],
+    references: [projects.id],
+  }),
+}));
 
 export const session = pgTable("session", {
   id: text("id").primaryKey(),
