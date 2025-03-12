@@ -1,10 +1,28 @@
-import { boolean, pgTable, serial, text, timestamp } from "drizzle-orm/pg-core";
+import { sql } from "drizzle-orm";
+import {
+  boolean,
+  integer,
+  json,
+  pgTable,
+  serial,
+  text,
+  timestamp,
+  uuid,
+} from "drizzle-orm/pg-core";
 
 export const todo = pgTable("todos", {
   id: serial().primaryKey(),
   task: text().notNull(),
   completed: boolean().notNull().default(false),
 });
+
+const timestamps = {
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at")
+    .defaultNow()
+    .$onUpdateFn(() => new Date())
+    .notNull(),
+};
 
 export const user = pgTable("user", {
   id: text("id").primaryKey(),
@@ -14,6 +32,62 @@ export const user = pgTable("user", {
   image: text("image"),
   createdAt: timestamp("created_at").notNull(),
   updatedAt: timestamp("updated_at").notNull(),
+});
+
+export const projects = pgTable("projects", {
+  id: uuid("id")
+    .primaryKey()
+    .default(sql`uuid_generate_v4()`),
+  slug: text("slug").notNull().unique(),
+  name: text("name").notNull(),
+  githubUrl: text("github_url").notNull(),
+  creatorId: text("creator_id")
+    .notNull()
+    .references(() => user.id, { onDelete: "cascade" }),
+  ...timestamps,
+});
+
+export const deployments = pgTable("deployments", {
+  id: uuid("id")
+    .primaryKey()
+    .default(sql`uuid_generate_v4()`),
+  projectId: uuid("project_id")
+    .notNull()
+    .references(() => projects.id, { onDelete: "cascade" }),
+  gitCommitHash: text("git_commit_hash").notNull(),
+  gitRef: text("git_ref").notNull(),
+  gitCommitMessage: text("git_commit_message").notNull(),
+  gitCommitAuthorName: text("git_commit_author_name").notNull(),
+  framework: text("framework").notNull(),
+  buildStatus: text("build_status", {
+    enum: ["IN_QUEUE", "BUILDING", "SUCCESS", "FAILED"],
+  })
+    .notNull()
+    .default("IN_QUEUE"),
+  buildDurationMs: integer("build_duration_ms").default(0),
+  target: text("target", { enum: ["PRODUCTION", "PREVIEW"] }).notNull(),
+  /**
+   * `activeState` is used to determine if the production deployment is active or not.
+   * If the deployment is active, it means that the deployment is live and is being served to the users.
+   * `activeState` will be `NA` for preview deployments.
+   */
+  activeState: text("activeState", {
+    enum: ["ACTIVE", "INACTIVE", "NA"],
+  }).notNull(),
+  /**
+   * alias of the deployment
+   * For
+   * - production deployment: alias = <project-slug>.deplit.live
+   * - preview deployment: alias = <project-slug>-<git-commit-short-sha>.deplit.live
+   */
+  alias: text("alias").notNull(),
+  /**
+   * metadata of the deployment like
+   * - htmlRoutes
+   * - assetRoutes
+   * @type {Record<string, string>}
+   */
+  metadata: json("metadata").$type<Record<string, string>>(),
 });
 
 export const session = pgTable("session", {
