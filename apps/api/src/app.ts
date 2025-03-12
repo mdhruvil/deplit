@@ -1,11 +1,18 @@
 import { Hono } from "hono";
-import { db } from "./db/index.js";
-import { todo } from "./db/schema.js";
-import { auth } from "./lib/auth.js";
 import { cors } from "hono/cors";
+import { authMiddleware } from "./auth-middleware.js";
 import { env } from "./env.js";
+import { auth } from "./lib/auth.js";
+import { projectsRouter } from "./routers/projects.js";
 
-export const app = new Hono({ strict: false })
+export type Env = {
+  Variables: {
+    user: typeof auth.$Infer.Session.user | null;
+    session: typeof auth.$Infer.Session.session | null;
+  };
+};
+
+export const app = new Hono<Env>({ strict: false })
   .basePath("/api")
   .use(
     "*",
@@ -17,20 +24,10 @@ export const app = new Hono({ strict: false })
       credentials: true,
     }),
   )
+  .use(authMiddleware)
   .on(["POST", "GET"], "/auth/**", (c) => auth.handler(c.req.raw))
   .get("/auth-redirect", (c) => c.redirect(`${env.CONTROL_PANE_URL}/profile`))
-  .get("/todo", async (c) => {
-    const todos = await db.query.todo.findMany();
-    return c.json({ message: "OK!", todos });
-  })
-  .post("/todo", async (c) => {
-    const { title } = await c.req.json();
-    if (!title || typeof title !== "string") {
-      return c.json({ error: "Invalid title" }, 400);
-    }
-    const returnedTodo = await db
-      .insert(todo)
-      .values({ task: title })
-      .returning();
-    return c.json({ message: "OK!", todo: returnedTodo });
+  .route("/project", projectsRouter)
+  .onError((err, c) => {
+    return c.json({ error: err.message }, 500);
   });

@@ -1,0 +1,19 @@
+meta {
+  name: create project
+  type: http
+  seq: 4
+}
+
+post {
+  url: {{baseUrl}}/project
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "githubUrl": "https://github.com/mdhruvil/mdhruvil.github.io",
+    "slug": "mdhruvil2",
+    "name": "mdhruvil portfolio"
+  }
+}

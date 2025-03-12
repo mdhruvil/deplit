@@ -32,7 +32,11 @@ function RouteComponent() {
     return (
       <div className="space-y-3 p-4">
         <h3>You are not logged in.</h3>
-        <Link to="/login" className={buttonVariants()}>
+        <Link
+          to="/login"
+          className={buttonVariants()}
+          search={{ redirect: "/profile" }}
+        >
           Login
         </Link>
       </div>

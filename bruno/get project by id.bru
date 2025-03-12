@@ -1,0 +1,15 @@
+meta {
+  name: get project by id
+  type: http
+  seq: 3
+}
+
+get {
+  url: {{baseUrl}}/project/:projectId
+  body: none
+  auth: none
+}
+
+params:path {
+  projectId: 24c11076-c228-40de-9da0-4690bd3f0400
+}

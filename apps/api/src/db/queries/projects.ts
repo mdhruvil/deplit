@@ -5,10 +5,13 @@ import { ProjectInsert, ProjectUpdate } from "../validators.js";
 
 export class DBProjects {
   static async create(userId: string, data: ProjectInsert) {
-    const result = await db.insert(projects).values({
-      ...data,
-      creatorId: userId,
-    });
+    const result = await db
+      .insert(projects)
+      .values({
+        ...data,
+        creatorId: userId,
+      })
+      .returning();
     return result;
   }
 
@@ -42,7 +45,8 @@ export class DBProjects {
       .set({
         ...data,
       })
-      .where(and(eq(projects.id, projectId), eq(projects.creatorId, userId)));
+      .where(and(eq(projects.id, projectId), eq(projects.creatorId, userId)))
+      .returning();
     return result;
   }
 
