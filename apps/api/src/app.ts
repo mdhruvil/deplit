@@ -8,7 +8,7 @@ import { env } from "./env.js";
 export const app = new Hono({ strict: false })
   .basePath("/api")
   .use(
-    "/auth/**", // or replace with "*" to enable cors for all routes
+    "*",
     cors({
       origin: env.CONTROL_PANE_URL,
       allowHeaders: ["Content-Type", "Authorization"],
