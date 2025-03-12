@@ -216,6 +216,31 @@ importers:
         specifier: ^6.0.3
         version: 6.2.0(@types/node@22.13.8)(jiti@2.4.2)(lightningcss@1.29.1)(tsx@4.19.2)
 
+  apps/sidecar:
+    dependencies:
+      '@hono/node-server':
+        specifier: ^1.13.8
+        version: 1.13.8(hono@4.7.4)
+      hono:
+        specifier: ^4.7.4
+        version: 4.7.4
+    devDependencies:
+      '@deplit/eslint-config':
+        specifier: workspace:^
+        version: link:../../packages/eslint-config
+      '@deplit/typescript-config':
+        specifier: workspace:^
+        version: link:../../packages/typescript-config
+      '@types/node':
+        specifier: ^20.11.17
+        version: 20.17.19
+      eslint:
+        specifier: ^9.20.0
+        version: 9.20.0(jiti@2.4.2)
+      tsx:
+        specifier: ^4.7.1
+        version: 4.19.2
+
   packages/eslint-config:
     devDependencies:
       '@eslint/js':
@@ -2759,6 +2784,10 @@ packages:
     resolution: {integrity: sha512-8V5XxoOF6SI12jkHkzX/6aLBMU5GEF5g387EjVSQipS0DlxWgWGSMeEayY3CRBjtTUQYwLHx9JYouWqKzy2Vng==}
     engines: {node: '>=16.9.0'}
 
+  hono@4.7.4:
+    resolution: {integrity: sha512-Pst8FuGqz3L7tFF+u9Pu70eI0xa5S3LPUmrNd5Jm8nTHze9FxLTK9Kaj5g/k4UcwuJSXTP65SyHOPLrffpcAJg==}
+    engines: {node: '>=16.9.0'}
+
   http-proxy-agent@7.0.2:
     resolution: {integrity: sha512-T1gkAiYYDWYx3V5Bmyu7HcfcvL7mUrTWiM6yOfa3PIphViJ/gFPbvidQ+veqSOHci/PxBcDabeUNCzpOODJZig==}
     engines: {node: '>= 14'}
@@ -5171,6 +5200,10 @@ snapshots:
     dependencies:
       hono: 4.7.2
 
+  '@hono/node-server@1.13.8(hono@4.7.4)':
+    dependencies:
+      hono: 4.7.4
+
   '@hono/zod-validator@0.4.3(hono@4.7.2)(zod@3.24.2)':
     dependencies:
       hono: 4.7.2
@@ -5701,7 +5734,7 @@ snapshots:
   '@types/glob@7.2.0':
     dependencies:
       '@types/minimatch': 5.1.2
-      '@types/node': 22.13.0
+      '@types/node': 22.13.8
 
   '@types/inquirer@6.5.0':
     dependencies:
@@ -5744,7 +5777,7 @@ snapshots:
 
   '@types/through@0.0.33':
     dependencies:
-      '@types/node': 22.13.0
+      '@types/node': 22.13.8
 
   '@types/tinycolor2@1.4.6': {}
 
@@ -7067,6 +7100,8 @@ snapshots:
   headers-polyfill@4.0.3: {}
 
   hono@4.7.2: {}
+
+  hono@4.7.4: {}
 
   http-proxy-agent@7.0.2:
     dependencies:

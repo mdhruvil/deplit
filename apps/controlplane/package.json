@@ -8,7 +8,8 @@
     "dev": "vite",
     "build": "vite build",
     "serve": "vite preview",
-    "start": "vite"
+    "start": "vite",
+    "lint": "eslint ."
   },
   "devDependencies": {
     "@deplit/eslint-config": "workspace:^",

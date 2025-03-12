@@ -1,0 +1,19 @@
+{
+  "name": "sidecar",
+  "type": "module",
+  "scripts": {
+    "dev": "tsx watch src/index.ts",
+    "lint": "eslint ."
+  },
+  "dependencies": {
+    "@hono/node-server": "^1.13.8",
+    "hono": "^4.7.4"
+  },
+  "devDependencies": {
+    "@deplit/eslint-config": "workspace:^",
+    "@deplit/typescript-config": "workspace:^",
+    "@types/node": "^20.11.17",
+    "eslint": "^9.20.0",
+    "tsx": "^4.7.1"
+  }
+}
