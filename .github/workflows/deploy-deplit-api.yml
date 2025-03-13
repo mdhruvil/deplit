@@ -31,7 +31,7 @@ jobs:
 
       - name: Zip artifact for deployment
         working-directory: apps/api
-        run: zip release.zip ./dist ./drizzle ./drizzle.config.ts ./node_modules ./package.json -r
+        run: zip release.zip ./dist ./drizzle ./drizzle.config.ts ./node_modules/@esbuild ./node_modules/pg ./startup_script.sh ./package.json -r
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
