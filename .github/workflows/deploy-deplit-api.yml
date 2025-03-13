@@ -1,9 +1,9 @@
 name: Build and deploy Deplit API
 
 on:
-  # push:
-  #   branches:
-  #     - main
+  push:
+    branches:
+      - main
   workflow_dispatch:
 
 jobs:
@@ -31,7 +31,7 @@ jobs:
 
       - name: Zip artifact for deployment
         working-directory: apps/api
-        run: zip release.zip ./dist ./drizzle ./drizzle.config.ts ./node_modules/@esbuild ./package.json -r
+        run: zip release.zip ./dist ./drizzle ./drizzle.config.ts ./node_modules/@esbuild ./node_modules/pg ./package.json -r
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
