@@ -41,9 +41,6 @@ importers:
       hono:
         specifier: ^4.7.2
         version: 4.7.2
-      pg:
-        specifier: ^8.13.3
-        version: 8.13.3
       zod:
         specifier: ^3.24.2
         version: 3.24.2
@@ -72,6 +69,9 @@ importers:
       eslint:
         specifier: ^9.20.0
         version: 9.20.0(jiti@2.4.2)
+      pg:
+        specifier: ^8.13.3
+        version: 8.13.3
       tsx:
         specifier: ^4.7.1
         version: 4.19.2
