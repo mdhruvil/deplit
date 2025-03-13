@@ -24,6 +24,7 @@
   "devDependencies": {
     "@deplit/eslint-config": "workspace:^",
     "@deplit/typescript-config": "workspace:^",
+    "@esbuild/linux-x64": "^0.25.1",
     "@types/node": "^20.17.19",
     "@types/pg": "^8.11.11",
     "drizzle-kit": "^0.30.4",

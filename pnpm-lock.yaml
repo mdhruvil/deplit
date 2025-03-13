@@ -54,6 +54,9 @@ importers:
       '@deplit/typescript-config':
         specifier: workspace:^
         version: link:../../packages/typescript-config
+      '@esbuild/linux-x64':
+        specifier: ^0.25.1
+        version: 0.25.1
       '@types/node':
         specifier: ^20.17.19
         version: 20.17.19
@@ -954,6 +957,12 @@ packages:
 
   '@esbuild/linux-x64@0.25.0':
     resolution: {integrity: sha512-9yl91rHw/cpwMCNytUDxwj2XjFpxML0y9HAOH9pNVQDpQrBxHy01Dx+vaMu0N1CKa/RzBD2hB4u//nfc+Sd3Cw==}
+    engines: {node: '>=18'}
+    cpu: [x64]
+    os: [linux]
+
+  '@esbuild/linux-x64@0.25.1':
+    resolution: {integrity: sha512-xbfUhu/gnvSEg+EGovRc+kjBAkrvtk38RlerAzQxvMzlB4fXpCFCeUAYzJvrnhFtdeyVCDANSjJvOvGYoeKzFA==}
     engines: {node: '>=18'}
     cpu: [x64]
     os: [linux]
@@ -5064,6 +5073,8 @@ snapshots:
 
   '@esbuild/linux-x64@0.25.0':
     optional: true
+
+  '@esbuild/linux-x64@0.25.1': {}
 
   '@esbuild/netbsd-arm64@0.25.0':
     optional: true
