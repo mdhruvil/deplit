@@ -3,8 +3,8 @@
   "type": "module",
   "scripts": {
     "dev": "tsx watch src/index.ts",
-    "build": "SKIP_ENV_VALIDATION=true tsc",
-    "start": "pnpm run build && node dist/index.js",
+    "build": "SKIP_ENV_VALIDATION=true esbuild src/index.ts --bundle --platform=node --target=node22 --outfile=dist/index.cjs",
+    "start": "pnpm run build && node dist/index.cjs",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
     "db:studio": "drizzle-kit studio",
