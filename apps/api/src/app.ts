@@ -4,6 +4,7 @@ import { authMiddleware } from "./auth-middleware.js";
 import { env } from "./env.js";
 import { auth } from "./lib/auth.js";
 import { projectsRouter } from "./routers/projects.js";
+import { deploymentsRouter } from "./routers/deployments.js";
 
 export type Env = {
   Variables: {
@@ -34,6 +35,7 @@ export const app = new Hono<Env>({ strict: false })
   .on(["POST", "GET"], "/auth/**", (c) => auth.handler(c.req.raw))
   .get("/auth-redirect", (c) => c.redirect(`${env.CONTROL_PANE_URL}/profile`))
   .route("/project", projectsRouter)
+  .route("/project/:projectId/deployment", deploymentsRouter)
   .onError((err, c) => {
     return c.json({ error: err.message }, 500);
   });

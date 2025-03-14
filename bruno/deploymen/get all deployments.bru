@@ -1,0 +1,15 @@
+meta {
+  name: get all deployments
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{baseUrl}}/project/:projectId/deployment
+  body: none
+  auth: none
+}
+
+params:path {
+  projectId: 26eb96d3-f233-45e6-b3f6-be9fb837031b
+}

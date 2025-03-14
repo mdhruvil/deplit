@@ -1,0 +1,21 @@
+meta {
+  name: delete project
+  type: http
+  seq: 5
+}
+
+delete {
+  url: {{baseUrl}}/project/:projectId
+  body: json
+  auth: none
+}
+
+params:path {
+  projectId: 24c11076-c228-40de-9da0-4690bd3f0400
+}
+
+body:json {
+  {
+    "name": "mdhruvil portfolio3"
+  }
+}

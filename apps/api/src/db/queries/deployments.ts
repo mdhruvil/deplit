@@ -5,10 +5,13 @@ import { DeploymentInsert, DeploymentUpdate } from "../validators.js";
 
 export class DBDeployments {
   static async create(projectId: string, data: DeploymentInsert) {
-    const result = await db.insert(deployments).values({
-      ...data,
-      projectId,
-    });
+    const result = await db
+      .insert(deployments)
+      .values({
+        ...data,
+        projectId,
+      })
+      .returning();
     return result;
   }
 

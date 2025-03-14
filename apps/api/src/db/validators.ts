@@ -20,8 +20,10 @@ export type ProjectUpdate = z.infer<typeof projectUpdateSchema>;
 export const deploymentInsertSchema = createInsertSchema(deployments).omit({
   projectId: true,
 });
-export const deploymentUpdateSchema = deploymentInsertSchema.partial().omit({
-  id: true,
-});
+export const deploymentUpdateSchema = deploymentInsertSchema
+  .omit({
+    id: true,
+  })
+  .partial();
 export type DeploymentInsert = z.infer<typeof deploymentInsertSchema>;
 export type DeploymentUpdate = z.infer<typeof deploymentUpdateSchema>;

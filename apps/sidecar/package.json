@@ -1,5 +1,5 @@
 {
-  "name": "sidecar",
+  "name": "@deplit/sidecar",
   "type": "module",
   "scripts": {
     "dev": "tsx watch src/index.ts",

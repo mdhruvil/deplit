@@ -1,15 +1,21 @@
 meta {
-  name: get project by id
+  name: update project
   type: http
-  seq: 3
+  seq: 4
 }
 
-get {
+put {
   url: {{baseUrl}}/project/:projectId
-  body: none
+  body: json
   auth: none
 }
 
 params:path {
   projectId: 24c11076-c228-40de-9da0-4690bd3f0400
+}
+
+body:json {
+  {
+    "name": "mdhruvil portfolio3"
+  }
 }
