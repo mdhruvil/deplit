@@ -49,3 +49,7 @@ __azurite_db*__.json
 *.sqlite
 *.db
 .aider*
+
+
+# azure functions
+local.settings.json
