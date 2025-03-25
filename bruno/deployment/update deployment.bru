@@ -1,16 +1,23 @@
 meta {
-  name: get deployment by id
+  name: update deployment
   type: http
-  seq: 2
+  seq: 4
 }
 
-get {
+put {
   url: {{baseUrl}}/project/:projectId/deployment/:deploymentId
-  body: none
+  body: json
   auth: none
 }
 
 params:path {
-  deploymentId: 
+  deploymentId: 2aa7b388-c46b-4814-bee2-d339589c3c19
   projectId: 26eb96d3-f233-45e6-b3f6-be9fb837031b
+}
+
+body:json {
+  {
+    "activeState": "INACTIVE"
+  }
+  
 }

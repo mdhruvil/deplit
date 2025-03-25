@@ -1,11 +1,11 @@
 meta {
-  name: update deployment
+  name: delete deployment
   type: http
-  seq: 4
+  seq: 5
 }
 
-put {
-  url: {{baseUrl}}/project/:projectId/:deploymentId
+delete {
+  url: {{baseUrl}}/project/:projectId/deployment/:deploymentId
   body: json
   auth: none
 }
