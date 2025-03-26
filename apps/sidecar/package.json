@@ -3,7 +3,9 @@
   "type": "module",
   "scripts": {
     "dev": "tsx watch src/index.ts",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "build": "esbuild src/index.ts --bundle --platform=node --target=node22 --outfile=dist/index.cjs",
+    "start": "node dist/index.cjs"
   },
   "dependencies": {
     "@hono/node-server": "^1.13.8",
@@ -13,6 +15,7 @@
     "@deplit/eslint-config": "workspace:^",
     "@deplit/typescript-config": "workspace:^",
     "@types/node": "^20.11.17",
+    "esbuild": "^0.25.1",
     "eslint": "^9.20.0",
     "tsx": "^4.7.1"
   }
