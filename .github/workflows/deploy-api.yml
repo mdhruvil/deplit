@@ -1,4 +1,4 @@
-name: Build and deploy Deplit API
+name: (API):deploy to Azure Web Apps
 
 on:
   push:

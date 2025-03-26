@@ -28,9 +28,7 @@ export const app = new Hono<Env>({ strict: false })
   .use(authMiddleware)
   .get("/", (c) => {
     console.log("Hello World");
-    console.log(process.env);
-    console.log("\n\n\n\n\n\n");
-    return c.json({ message: "Hello, World! 2.0" });
+    return c.json({ message: "Hello, World! 3.0" });
   })
   .on(["POST", "GET"], "/auth/**", (c) => auth.handler(c.req.raw))
   .get("/auth-redirect", (c) => c.redirect(`${env.CONTROL_PANE_URL}/profile`))
