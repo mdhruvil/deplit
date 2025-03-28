@@ -44,8 +44,9 @@ export function runVercelBuild(dest: string): Promise<void> {
   const projectJsonPath = path.join(vercelDir, "project.json");
   return new Promise((resolve, reject) => {
     const buildProcess = spawn(
-      "npx",
-      ["--yes", "vercel", "build", "--cwd", dest, "-A", projectJsonPath],
+      // vercel cli will be globally installed in the container
+      "vercel",
+      ["build", "--cwd", dest, "-A", projectJsonPath],
       { shell: true },
     );
 

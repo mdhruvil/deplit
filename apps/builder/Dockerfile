@@ -20,10 +20,12 @@ WORKDIR /app/apps/builder
 RUN pnpm run build
 
 
-FROM node:22-alpine 
+FROM node:22-alpine
 ENV PNPM_HOME="/pnpm"
 ENV PATH="$PNPM_HOME:$PATH"
 RUN corepack enable
+
+RUN pnpm install -g vercel@41.4.1
 
 WORKDIR /app
 ENV REPO_URL=""
