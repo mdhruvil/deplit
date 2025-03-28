@@ -38,8 +38,7 @@ const jsonMessage = winston.format((info) => {
   return info;
 });
 
-const logFileDest =
-  process.env.LOG_FILE_DEST ?? "/home/dhruvil/Downloads/deplit/build.log";
+const logFileDest = process.env.LOG_FILE_DEST;
 
 /**
  * winston logger with custom `local` level

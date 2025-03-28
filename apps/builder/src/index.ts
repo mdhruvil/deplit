@@ -10,15 +10,12 @@ import { mapUrlToFilePath } from "./postprocess.js";
 import { logger } from "./utils/loggers.js";
 import { uploadDirRecursively } from "./upload.js";
 
-const cloneDest = process.env.WORK_DIR ?? "/home/dhruvil/Downloads/deplit/temp";
-const outDir = process.env.OUTPUT_DIR ?? "/home/dhruvil/Downloads/deplit/out";
-
-const gitUrl =
-  process.env.REPO_URL ?? "https://github.com/nextjs/deploy-github-pages.git";
-
-const branch = process.env.BRANCH ?? "main";
-
-export const projectId = process.env.PROJECT_ID ?? "project-1";
+const cloneDest = process.env.WORK_DIR;
+const outDir = process.env.OUTPUT_DIR;
+const gitUrl = process.env.REPO_URL;
+const branch = process.env.BRANCH;
+export const projectId = process.env.PROJECT_ID!;
+const logFileDest = process.env.LOG_FILE_DEST;
 
 export let latestCommitObjectId: string | undefined;
 
@@ -26,13 +23,27 @@ async function cleanDest(dest: string) {
   try {
     await fs.rm(dest, { recursive: true, force: true });
     await fs.mkdir(dest, { recursive: true });
-    logger.info(`Cleaned directory: ${dest}`);
   } catch (err) {
     logger.warn(`Error cleaning directory: ${err}`);
   }
 }
 
 async function main() {
+  // TODO: should we use zod here?
+  if (
+    !cloneDest ||
+    !outDir ||
+    !gitUrl ||
+    !branch ||
+    !projectId ||
+    !logFileDest
+  ) {
+    logger.error(
+      "Missing environment variable(s). Check the .env.example file.",
+    );
+    process.exit(1);
+  }
+
   await cleanDest(cloneDest);
   await cleanDest(outDir);
 

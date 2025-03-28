@@ -28,13 +28,12 @@ RUN corepack enable
 RUN pnpm install -g vercel@41.4.1
 
 WORKDIR /app
-ENV REPO_URL=""
-ENV BRANCH="main"
+
 ENV OUTPUT_DIR="/deplit/out"
 ENV WORK_DIR="/deplit/workspace"
 ENV LOG_FILE_DEST="/deplit/logs/build.log"
 ENV NODE_ENV="production"
-ENV PROJECT_ID="default-project"
+
 
 RUN mkdir -p ${OUTPUT_DIR} ${WORK_DIR} /deplit/logs && \
     chmod -R 777 ${OUTPUT_DIR} ${WORK_DIR} /deplit/logs

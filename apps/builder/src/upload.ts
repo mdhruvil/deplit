@@ -38,6 +38,10 @@ export async function uploadDirRecursively({
   localCurrentDirPath,
   localBaseDirPath = localCurrentDirPath,
 }: UploadDirRecursivelyArgs) {
+  if (process.env.NODE_ENV === "development") {
+    logger.local("Skipping upload in test mode");
+    return;
+  }
   const containerClient =
     globalContainerClient ??
     (globalContainerClient = await createContainerIfNotExists());
