@@ -41,6 +41,16 @@ const jsonMessage = winston.format((info) => {
 const logFileDest = process.env.LOG_FILE_DEST;
 
 /**
+ * format for logs which will be shown to user and stored in our backend
+ */
+const userLogFormat = winston.format.combine(
+  notLocalFilter(),
+  winston.format.errors({ stack: false }),
+  winston.format.timestamp(),
+  winston.format.json(),
+);
+
+/**
  * winston logger with custom `local` level
  * logs with `local` level will be logged to console but not shown to the user or saved to file
  */
@@ -48,6 +58,19 @@ export const logger = winston.createLogger({
   levels: customLevels.levels,
   level: "local",
   transports: [
+    new winston.transports.Http({
+      format: userLogFormat,
+      port: Number(process.env.SIDECAR_PORT) || 9090,
+      path: "/logs/ingest",
+      auth: {
+        bearer: process.env.INTERNAL_SIDECAR_TOKEN,
+      },
+    }),
+    new winston.transports.File({
+      filename: logFileDest,
+      format: userLogFormat,
+    }),
+
     new winston.transports.Console({
       format: winston.format.combine(
         winston.format.timestamp({ format: "YYYY-MM-DD HH:mm:ss.ms" }),
@@ -66,14 +89,6 @@ export const logger = winston.createLogger({
           },
         ),
         winston.format.colorize({ colors: customLevels.colors, all: true }),
-      ),
-    }),
-    new winston.transports.File({
-      filename: logFileDest,
-      format: winston.format.combine(
-        notLocalFilter(),
-        winston.format.timestamp(),
-        winston.format.json(),
       ),
     }),
   ],

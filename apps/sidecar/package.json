@@ -2,14 +2,16 @@
   "name": "@deplit/sidecar",
   "type": "module",
   "scripts": {
-    "dev": "tsx watch src/index.ts",
+    "dev": "tsx watch --env-file=.env src/index.ts",
     "lint": "eslint .",
     "build": "esbuild src/index.ts --bundle --platform=node --target=node22 --outfile=dist/index.cjs",
     "start": "node dist/index.cjs"
   },
   "dependencies": {
     "@hono/node-server": "^1.13.8",
-    "hono": "^4.7.4"
+    "@hono/zod-validator": "^0.4.3",
+    "hono": "^4.7.4",
+    "zod": "^3.24.2"
   },
   "devDependencies": {
     "@deplit/eslint-config": "workspace:^",

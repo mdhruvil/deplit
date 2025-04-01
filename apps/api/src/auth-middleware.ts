@@ -6,6 +6,7 @@ export const authMiddleware = createMiddleware<Env>(async (c, next) => {
   const session = await auth.api.getSession({ headers: c.req.raw.headers });
 
   if (!session) {
+    // TODO: remove this temp user
     const tempUser = {
       id: "U3WslvrP7LRxeFctcUURUatkv46ziKa5",
       name: "Dhruvil Moradiya",
