@@ -224,9 +224,15 @@ importers:
       '@hono/node-server':
         specifier: ^1.13.8
         version: 1.13.8(hono@4.7.4)
+      '@hono/zod-validator':
+        specifier: ^0.4.3
+        version: 0.4.3(hono@4.7.4)(zod@3.24.2)
       hono:
         specifier: ^4.7.4
         version: 4.7.4
+      zod:
+        specifier: ^3.24.2
+        version: 3.24.2
     devDependencies:
       '@deplit/eslint-config':
         specifier: workspace:^
@@ -5615,6 +5621,11 @@ snapshots:
   '@hono/zod-validator@0.4.3(hono@4.7.2)(zod@3.24.2)':
     dependencies:
       hono: 4.7.2
+      zod: 3.24.2
+
+  '@hono/zod-validator@0.4.3(hono@4.7.4)(zod@3.24.2)':
+    dependencies:
+      hono: 4.7.4
       zod: 3.24.2
 
   '@humanfs/core@0.19.1': {}
