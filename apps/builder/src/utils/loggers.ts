@@ -38,8 +38,6 @@ const jsonMessage = winston.format((info) => {
   return info;
 });
 
-const logFileDest = process.env.LOG_FILE_DEST;
-
 /**
  * format for logs which will be shown to user and stored in our backend
  */
@@ -63,17 +61,17 @@ export const logger = winston.createLogger({
       port: process.env.SIDECAR_PORT ? Number(process.env.SIDECAR_PORT) : 9090,
       path: "/logs/ingest",
       auth: {
-        bearer: process.env.INTERNAL_SIDECAR_TOKEN || (() => {
-          console.error("INTERNAL_SIDECAR_TOKEN is not set, logging to HTTP will fail");
-          return "missing-token";
-        })(),
+        bearer:
+          process.env.INTERNAL_SIDECAR_TOKEN ||
+          (() => {
+            console.error(
+              "INTERNAL_SIDECAR_TOKEN is not set, logging to HTTP will fail",
+            );
+            return "missing-token";
+          })(),
       },
       handleExceptions: true,
       handleRejections: true,
-    }),
-    new winston.transports.File({
-      filename: logFileDest,
-      format: userLogFormat,
     }),
 
     new winston.transports.Console({
@@ -88,7 +86,7 @@ export const logger = winston.createLogger({
               ? `${timestamp} ${level}: ${message} - ${stack}`
               : `${timestamp} ${level}: ${message}`;
             const metaString = Object.keys(meta).length
-              ? ` ${JSON.stringify(meta)}`
+              ? ` ${JSON.stringify(meta, null, 2)}`
               : "";
             return logMessage + metaString;
           },
