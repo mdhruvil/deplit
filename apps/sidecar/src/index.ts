@@ -25,7 +25,17 @@ const app = new Hono()
     async (c) => {
       const { status, message } = c.req.valid("json");
       console.log("Build status updated:", status, message);
-      return c.text("Build status updated");
+      // TODO: call backend api to update the build status
+
+      // here we exit the sidecar process because if the build is successful or failed, we want to stop the sidecar process to kill the container instances created by azure container apps
+      setTimeout(() => {
+        if (status === "SUCCESS") {
+          process.exit(0);
+        } else {
+          process.exit(1);
+        }
+      }, 3000);
+      return c.json({ ok: true });
     },
   );
 

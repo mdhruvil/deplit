@@ -9,6 +9,7 @@ import { cloneRepo, getLatestCommitObjectId } from "./git.js";
 import { mapUrlToFilePath } from "./postprocess.js";
 import { logger } from "./utils/loggers.js";
 import { uploadDirRecursively } from "./upload.js";
+import { Sidecar } from "./utils/sidecar.js";
 
 const cloneDest = process.env.WORK_DIR;
 const outDir = process.env.OUTPUT_DIR;
@@ -108,12 +109,27 @@ async function main() {
   });
 }
 
+const sidecarPort = process.env.SIDECAR_PORT;
+const sidecarToken = process.env.INTERNAL_SIDECAR_TOKEN;
+
+if (!sidecarPort || !sidecarToken) {
+  logger.error("Missing environment variable(s). Check the .env.example file.");
+  process.exit(1);
+}
+
+const sidecar = new Sidecar(sidecarPort, sidecarToken);
+
 main()
-  .then(() => {
+  .then(async () => {
     logger.info("Build completed successfully.");
+    await sidecar.updateBuildStatus("SUCCESS", "Build completed successfully.");
     process.exit(0);
   })
-  .catch((err) => {
+  .catch(async (err) => {
     logger.error("Error: ", err);
+    await sidecar.updateBuildStatus(
+      "ERROR",
+      err.message ?? "Build failed for some unknown reason.",
+    );
     process.exit(1);
   });
