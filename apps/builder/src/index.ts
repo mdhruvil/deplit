@@ -38,10 +38,9 @@ async function main() {
     !projectId ||
     !logFileDest
   ) {
-    logger.error(
+    throw new Error(
       "Missing environment variable(s). Check the .env.example file.",
     );
-    process.exit(1);
   }
 
   await cleanDest(cloneDest);
@@ -50,8 +49,7 @@ async function main() {
   logger.info(`Cloning ${gitUrl} (Branch: ${branch})`);
   await cloneRepo({ url: gitUrl, dest: cloneDest, ref: branch }).catch(
     (err) => {
-      logger.error("Cloning failed.", err);
-      process.exit(1);
+      throw new Error("Failed to clone repo.", { cause: err });
     },
   );
   logger.info("Cloning completed.");
@@ -60,14 +58,12 @@ async function main() {
     dest: cloneDest,
     ref: branch,
   }).catch((err) => {
-    logger.error("Failed to get latest commit object id.", err);
-    process.exit(1);
+    throw new Error("Failed to get latest commit object id.", { cause: err });
   });
 
   const framework = await detectFramework(cloneDest);
   if (!framework) {
-    logger.error("Failed to detect framework.", framework);
-    process.exit(1);
+    throw new Error("Failed to detect framework.", { cause: framework });
   }
   logger.info(`Detected framework: ${framework}`);
 
@@ -75,15 +71,13 @@ async function main() {
     dest: cloneDest,
     detectedFramework: framework,
   }).catch((err) => {
-    logger.error("Failed to create vercel config.", err);
-    process.exit(1);
+    throw new Error("Failed to create vercel config.", { cause: err });
   });
   logger.info("Vercel config created.");
 
   logger.info("Running: vercel build");
   await runVercelBuild(cloneDest).catch((err) => {
-    logger.error("Vercel build failed.", err);
-    process.exit(1);
+    throw new Error("Vercel build failed.", { cause: err });
   });
 
   const vercelStaticOutputDir = path.join(
@@ -95,8 +89,7 @@ async function main() {
   await fs
     .cp(vercelStaticOutputDir, outDir, { recursive: true })
     .catch((err) => {
-      logger.error("Failed to copy vercel output.", err);
-      process.exit(1);
+      throw new Error("Failed to copy vercel output.", { cause: err });
     });
 
   logger.info(`Postprocessing vercel output from ${outDir}`);
@@ -109,9 +102,18 @@ async function main() {
   await uploadDirRecursively({
     localCurrentDirPath: outDir,
   }).catch((err) => {
-    logger.local("Failed to upload files to Azure Blob Storage.", err);
-    process.exit(1);
+    throw new Error("Failed to upload files to Azure Blob Storage.", {
+      cause: err,
+    });
   });
 }
 
-main();
+main()
+  .then(() => {
+    logger.info("Build completed successfully.");
+    process.exit(0);
+  })
+  .catch((err) => {
+    logger.error("Error: ", err);
+    process.exit(1);
+  });
