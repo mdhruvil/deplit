@@ -29,6 +29,22 @@ async function cleanDest(dest: string) {
   }
 }
 
+/**
+ * Orchestrates the complete build automation workflow.
+ *
+ * This asynchronous function validates the required environment variables, cleans the destination directories, clones the Git repository, retrieves the latest commit, detects the project framework, creates a Vercel configuration, runs the Vercel build, copies the static output, maps URL routes to file paths, and finally uploads the output to Azure Blob Storage.
+ *
+ * Each step is critical and will throw an Error with a corresponding message and cause if it fails.
+ *
+ * @throws {Error} If any required environment variable is missing.
+ * @throws {Error} If cloning the repository fails.
+ * @throws {Error} If retrieving the latest commit object ID fails.
+ * @throws {Error} If framework detection fails.
+ * @throws {Error} If creating the Vercel configuration fails.
+ * @throws {Error} If the Vercel build process fails.
+ * @throws {Error} If copying the Vercel output fails.
+ * @throws {Error} If uploading files to Azure Blob Storage fails.
+ */
 async function main() {
   // TODO: should we use zod here?
   if (
