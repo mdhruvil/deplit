@@ -22,13 +22,21 @@
    * databases, object storage, AI inference, real-time communication and more.
    * https://developers.cloudflare.com/workers/runtime-apis/bindings/
    */
+  "kv_namespaces": [
+    {
+      "binding": "SITES",
+      "id": "4f69caaa1f134acbbc85076068164469",
+    },
+  ],
 
   /**
    * Environment Variables
    * https://developers.cloudflare.com/workers/wrangler/configuration/#environment-variables
    */
   "vars": {
+    // this flag is used for adding extra debug headers to the request
     "DEBUG": true,
+    "BLOB_HOSTNAME": "deplit.blob.core.windows.net",
   },
   /**
    * Note: Use secrets to store sensitive data.
