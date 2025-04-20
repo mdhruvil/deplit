@@ -23,7 +23,13 @@ export default {
     if (!subdomain || !site) {
       // if the site is not found, we want to return a custom 404 page
       // TODO: respond with custom 404 page
-      return new Response("Deplit - Not found", { status: 404 });
+      return new Response(
+        `Deplit - Site not found: ${subdomain || "unknown"}`, 
+        {
+          status: 404,
+          headers: { "Content-Type": "text/plain" }
+        }
+      );
     }
 
     // if the site is spa and the request is for a html route, rewrite the url to the `/index.html` file
@@ -48,7 +54,9 @@ export default {
     }
 
     url.hostname = env.BLOB_HOSTNAME;
-    console.log("Request URL: ", url.toString());
+    if (env.DEBUG) {
+        console.log("Request URL: ", url.toString());
+    }
     const contentFetchStart = performance.now();
     let response = await fetch(url, {
       cf: {
@@ -73,11 +81,15 @@ export default {
       response.headers.delete("cf-cache-status");
     }
 
+    // Create an array of headers to delete
+    const headersToDelete = [];
     response.headers.forEach((_, key) => {
       if (key.startsWith("x-ms-")) {
-        response.headers.delete(key);
+        headersToDelete.push(key);
       }
     });
+    // Delete the headers after iteration
+    headersToDelete.forEach(key => response.headers.delete(key));
     const headers = {
       "deplit-cache-status": cfCacheStatus ?? "miss",
       "deplit-col": request.cf?.colo,
