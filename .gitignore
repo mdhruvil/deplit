@@ -50,6 +50,9 @@ __azurite_db*__.json
 *.db
 .aider*
 
-
 # azure functions
 local.settings.json
+
+# wrangler project
+.dev.vars
+.wrangler/

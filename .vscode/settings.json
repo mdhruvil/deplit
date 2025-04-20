@@ -13,6 +13,9 @@
   "files.readonlyInclude": {
     "**/routeTree.gen.ts": true
   },
+  "files.associations": {
+    "wrangler.json": "jsonc"
+  },
   "azureFunctions.deploySubpath": "apps/spawner",
   "azureFunctions.postDeployTask": "npm install (functions)",
   "azureFunctions.projectLanguage": "TypeScript",
