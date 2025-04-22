@@ -11,12 +11,12 @@ import { logger } from "./utils/loggers.js";
 import { uploadDirRecursively } from "./upload.js";
 import { Sidecar } from "./utils/sidecar.js";
 
-const cloneDest = process.env.WORK_DIR!;
-const outDir = process.env.OUTPUT_DIR!;
-const gitUrl = process.env.REPO_URL!;
-const branch = process.env.BRANCH!;
-export const projectId = process.env.PROJECT_ID!;
-const logFileDest = process.env.LOG_FILE_DEST;
+const cloneDest = process.env.DEPLIT_WORK_DIR!;
+const outDir = process.env.DEPLIT_OUTPUT_DIR!;
+const gitUrl = process.env.DEPLIT_REPO_URL!;
+const branch = process.env.DEPLIT_BRANCH!;
+export const projectSlug = process.env.DEPLIT_PROJECT_SLUG!;
+const logFileDest = process.env.DEPLIT_LOG_FILE_DEST!;
 
 export let latestCommitObjectId: string | undefined;
 
@@ -32,14 +32,14 @@ async function cleanDest(dest: string) {
 async function main() {
   const missingEnvVars = [];
   // TODO: should we use zod here?
-  if (!cloneDest) missingEnvVars.push("WORK_DIR");
-  if (!outDir) missingEnvVars.push("OUTPUT_DIR");
-  if (!gitUrl) missingEnvVars.push("REPO_URL");
-  if (!branch) missingEnvVars.push("BRANCH");
-  if (!projectId) missingEnvVars.push("PROJECT_ID");
-  if (!logFileDest) missingEnvVars.push("LOG_FILE_DEST");
-  if (!process.env.INTERNAL_SIDECAR_TOKEN)
-    missingEnvVars.push("INTERNAL_SIDECAR_TOKEN");
+  if (!cloneDest) missingEnvVars.push("DEPLIT_WORK_DIR");
+  if (!outDir) missingEnvVars.push("DEPLIT_OUTPUT_DIR");
+  if (!gitUrl) missingEnvVars.push("DEPLIT_REPO_URL");
+  if (!branch) missingEnvVars.push("DEPLIT_BRANCH");
+  if (!projectSlug) missingEnvVars.push("DEPLIT_PROJECT_SLUG");
+  if (!logFileDest) missingEnvVars.push("DEPLIT_LOG_FILE_DEST");
+  if (!process.env.DEPLIT_INTERNAL_SIDECAR_TOKEN)
+    missingEnvVars.push("DEPLIT_INTERNAL_SIDECAR_TOKEN");
   if (missingEnvVars.length > 0) {
     throw new Error(
       `Missing environment variable(s): ${missingEnvVars.join(", ")}`,
@@ -111,8 +111,8 @@ async function main() {
   });
 }
 
-const sidecarPort = process.env.SIDECAR_PORT;
-const sidecarToken = process.env.INTERNAL_SIDECAR_TOKEN;
+const sidecarPort = process.env.DEPLIT_SIDECAR_PORT;
+const sidecarToken = process.env.DEPLIT_INTERNAL_SIDECAR_TOKEN;
 
 if (!sidecarPort || !sidecarToken) {
   logger.error("Missing environment variable(s). Check the .env.example file.");

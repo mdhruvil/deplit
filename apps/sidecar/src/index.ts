@@ -4,9 +4,9 @@ import { Hono } from "hono";
 import { bearerAuth } from "hono/bearer-auth";
 import { ingestLogsSchema, updateBuildStatusSchema } from "./validators.js";
 
-const token = process.env.INTERNAL_API_TOKEN;
+const token = process.env.DEPLIT_INTERNAL_API_TOKEN;
 if (!token) {
-  console.error("INTERNAL_API_TOKEN environment variable is not set");
+  console.error("DEPLIT_INTERNAL_API_TOKEN environment variable is not set");
   process.exit(1);
 }
 

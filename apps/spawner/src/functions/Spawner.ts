@@ -52,15 +52,15 @@ export async function Spawner(
   const token = crypto.randomUUID();
 
   const builderEnv = {
-    REPO_URL: item.githubUrl,
-    BRANCH: item.branch,
-    PROJECT_ID: item.projectSlug,
-    INTERNAL_SIDECAR_TOKEN: token,
-    SIDECAR_PORT: "9090",
+    DEPLIT_REPO_URL: item.githubUrl,
+    DEPLIT_BRANCH: item.branch,
+    DEPLIT_PROJECT_SLUG: item.projectSlug,
+    DEPLIT_INTERNAL_SIDECAR_TOKEN: token,
+    DEPLIT_SIDECAR_PORT: "9090",
   };
 
   const sidecarEnv = {
-    INTERNAL_API_TOKEN: token,
+    DEPLIT_INTERNAL_API_TOKEN: token,
   };
 
   const template: JobExecutionTemplate = {

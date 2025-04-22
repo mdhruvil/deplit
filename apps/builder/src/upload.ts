@@ -5,7 +5,7 @@ import fs from "fs/promises";
 import { createReadStream } from "fs";
 import mime from "mime-types";
 import path from "path";
-import { latestCommitObjectId, projectId } from "./index.js";
+import { latestCommitObjectId, projectSlug } from "./index.js";
 
 const accountName = "deplit";
 
@@ -15,14 +15,14 @@ const blobServiceClient = new BlobServiceClient(
 );
 
 async function createContainerIfNotExists() {
-  const containerClient = blobServiceClient.getContainerClient(projectId);
+  const containerClient = blobServiceClient.getContainerClient(projectSlug);
   const exists = await containerClient.exists();
   if (!exists) {
-    logger.local(`Container ${projectId} does not exist, creating...`);
+    logger.local(`Container ${projectSlug} does not exist, creating...`);
     await containerClient.create({
       access: "blob",
     });
-    logger.local(`Container ${projectId} created.`);
+    logger.local(`Container ${projectSlug} created.`);
   }
   return containerClient;
 }

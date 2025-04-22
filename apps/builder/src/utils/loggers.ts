@@ -58,14 +58,16 @@ export const logger = winston.createLogger({
   transports: [
     new winston.transports.Http({
       format: userLogFormat,
-      port: process.env.SIDECAR_PORT ? Number(process.env.SIDECAR_PORT) : 9090,
+      port: process.env.DEPLIT_SIDECAR_PORT
+        ? Number(process.env.DEPLIT_SIDECAR_PORT)
+        : 9090,
       path: "/logs/ingest",
       auth: {
         bearer:
-          process.env.INTERNAL_SIDECAR_TOKEN ||
+          process.env.DEPLIT_INTERNAL_SIDECAR_TOKEN ||
           (() => {
             console.error(
-              "INTERNAL_SIDECAR_TOKEN is not set, logging to HTTP will fail",
+              "DEPLIT_INTERNAL_SIDECAR_TOKEN is not set, logging to HTTP will fail",
             );
             return "missing-token";
           })(),

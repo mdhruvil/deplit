@@ -29,14 +29,14 @@ RUN pnpm install -g vercel@41.4.1
 
 WORKDIR /app
 
-ENV OUTPUT_DIR="/deplit/out"
-ENV WORK_DIR="/deplit/workspace"
-ENV LOG_FILE_DEST="/deplit/logs/build.log"
+ENV DEPLIT_OUTPUT_DIR="/deplit/out"
+ENV DEPLIT_WORK_DIR="/deplit/workspace"
+ENV DEPLIT_LOG_FILE_DEST="/deplit/logs/build.log"
 ENV NODE_ENV="production"
 
 
-RUN mkdir -p ${OUTPUT_DIR} ${WORK_DIR} /deplit/logs && \
-    chmod -R 777 ${OUTPUT_DIR} ${WORK_DIR} /deplit/logs
+RUN mkdir -p ${DEPLIT_OUTPUT_DIR} ${DEPLIT_WORK_DIR} /deplit/logs && \
+    chmod -R 777 ${DEPLIT_OUTPUT_DIR} ${DEPLIT_WORK_DIR} /deplit/logs
 
 COPY --from=builder /app/apps/builder/dist/index.cjs ./
 COPY --from=builder /app/apps/builder/package.json ./
