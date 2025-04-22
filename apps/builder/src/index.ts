@@ -11,10 +11,10 @@ import { logger } from "./utils/loggers.js";
 import { uploadDirRecursively } from "./upload.js";
 import { Sidecar } from "./utils/sidecar.js";
 
-const cloneDest = process.env.WORK_DIR;
-const outDir = process.env.OUTPUT_DIR;
-const gitUrl = process.env.REPO_URL;
-const branch = process.env.BRANCH;
+const cloneDest = process.env.WORK_DIR!;
+const outDir = process.env.OUTPUT_DIR!;
+const gitUrl = process.env.REPO_URL!;
+const branch = process.env.BRANCH!;
 export const projectId = process.env.PROJECT_ID!;
 const logFileDest = process.env.LOG_FILE_DEST;
 
@@ -30,17 +30,19 @@ async function cleanDest(dest: string) {
 }
 
 async function main() {
+  const missingEnvVars = [];
   // TODO: should we use zod here?
-  if (
-    !cloneDest ||
-    !outDir ||
-    !gitUrl ||
-    !branch ||
-    !projectId ||
-    !logFileDest
-  ) {
+  if (!cloneDest) missingEnvVars.push("WORK_DIR");
+  if (!outDir) missingEnvVars.push("OUTPUT_DIR");
+  if (!gitUrl) missingEnvVars.push("REPO_URL");
+  if (!branch) missingEnvVars.push("BRANCH");
+  if (!projectId) missingEnvVars.push("PROJECT_ID");
+  if (!logFileDest) missingEnvVars.push("LOG_FILE_DEST");
+  if (!process.env.INTERNAL_SIDECAR_TOKEN)
+    missingEnvVars.push("INTERNAL_SIDECAR_TOKEN");
+  if (missingEnvVars.length > 0) {
     throw new Error(
-      "Missing environment variable(s). Check the .env.example file.",
+      `Missing environment variable(s): ${missingEnvVars.join(", ")}`,
     );
   }
 

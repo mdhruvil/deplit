@@ -267,8 +267,14 @@ importers:
 
   apps/spawner:
     dependencies:
+      '@azure/arm-appcontainers':
+        specifier: ^2.1.0
+        version: 2.1.0
       '@azure/functions':
         specifier: ^4.0.0
+        version: 4.7.0
+      '@azure/identity':
+        specifier: ^4.7.0
         version: 4.7.0
     devDependencies:
       '@types/node':
@@ -366,8 +372,16 @@ packages:
     resolution: {integrity: sha512-C90iyzm/jLV7Lomv2UzwWUzRv9WZr1oRsFRKsX5HjQL4EXrbi9H/RtBkjCP+NF+ABZXUKpAa4F1dkoTaea4zHg==}
     hasBin: true
 
+  '@azure/abort-controller@1.1.0':
+    resolution: {integrity: sha512-TrRLIoSQVzfAJX9H1JeFjzAoDGcoK1IYX1UImfceTZpsyYfWr09Ss1aHW1y5TrrR3iq6RZLBwJ3E24uwPhwahw==}
+    engines: {node: '>=12.0.0'}
+
   '@azure/abort-controller@2.1.2':
     resolution: {integrity: sha512-nBrLsEWm4J2u5LpAPjxADTlq3trDgVZZXHNKabeXZtpq3d3AbN/KGO82R87rdDz5/lYB024rtEf10/q0urNgsA==}
+    engines: {node: '>=18.0.0'}
+
+  '@azure/arm-appcontainers@2.1.0':
+    resolution: {integrity: sha512-75mEbu/y8pCvoXKU32YRcSadWNpVl2gNt4ZJ3IFlmAv8PisZPtc5OgTU2QCDy3QzGp5EfMqAOC+HAcCEnPyGxQ==}
     engines: {node: '>=18.0.0'}
 
   '@azure/core-auth@1.9.0':
@@ -5275,9 +5289,25 @@ snapshots:
 
   '@antfu/ni@23.3.1': {}
 
+  '@azure/abort-controller@1.1.0':
+    dependencies:
+      tslib: 2.8.1
+
   '@azure/abort-controller@2.1.2':
     dependencies:
       tslib: 2.8.1
+
+  '@azure/arm-appcontainers@2.1.0':
+    dependencies:
+      '@azure/abort-controller': 1.1.0
+      '@azure/core-auth': 1.9.0
+      '@azure/core-client': 1.9.2
+      '@azure/core-lro': 2.7.2
+      '@azure/core-paging': 1.6.2
+      '@azure/core-rest-pipeline': 1.19.0
+      tslib: 2.8.1
+    transitivePeerDependencies:
+      - supports-color
 
   '@azure/core-auth@1.9.0':
     dependencies:
