@@ -23,3 +23,10 @@ export const auth = betterAuth({
     },
   },
 });
+
+export async function getAccountFromUserId(userId: string) {
+  const account = await db.query.account.findFirst({
+    where: (account, { eq }) => eq(account.userId, userId),
+  });
+  return account;
+}

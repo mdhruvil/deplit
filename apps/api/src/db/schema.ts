@@ -45,7 +45,15 @@ export const projects = pgTable("projects", {
     .notNull(),
   slug: text("slug").notNull().unique(),
   name: text("name").notNull(),
+  fullName: text("full_name").notNull(),
   githubUrl: text("github_url").notNull(),
+  githubVisibility: text("github_visibility", {
+    enum: ["PUBLIC", "PRIVATE"],
+  })
+    .notNull()
+    .default("PUBLIC"),
+  framework: text("framework"),
+  isSPA: boolean("is_spa").notNull().default(false),
   creatorId: text("creator_id")
     .notNull()
     .references(() => user.id, { onDelete: "cascade" }),
@@ -70,7 +78,6 @@ export const deployments = pgTable("deployments", {
   gitRef: text("git_ref").notNull(),
   gitCommitMessage: text("git_commit_message").notNull(),
   gitCommitAuthorName: text("git_commit_author_name").notNull(),
-  framework: text("framework").notNull(),
   buildStatus: text("build_status", {
     enum: ["IN_QUEUE", "BUILDING", "SUCCESS", "FAILED"],
   })
@@ -89,8 +96,8 @@ export const deployments = pgTable("deployments", {
   /**
    * alias of the deployment
    * For
-   * - production deployment: alias = <project-slug>.deplit.live
-   * - preview deployment: alias = <project-slug>-<git-commit-short-sha>.deplit.live
+   * - production deployment: alias = [project-slug].deplit.live
+   * - preview deployment: alias = [project-slug]-[git-commit-short-sha].deplit.live
    */
   alias: text("alias").notNull(),
   /**

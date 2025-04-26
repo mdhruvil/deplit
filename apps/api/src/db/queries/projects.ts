@@ -32,6 +32,13 @@ export class DBProjects {
     return result;
   }
 
+  static async findByFullName(fullName: string) {
+    const result = await db.query.projects.findMany({
+      where: (project, { eq }) => eq(project.fullName, fullName),
+    });
+    return result;
+  }
+
   static async findAll(userId: string) {
     const result = await db.query.projects.findMany({
       where: (project, { eq }) => eq(project.creatorId, userId),

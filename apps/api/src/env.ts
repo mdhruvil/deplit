@@ -1,7 +1,4 @@
-import dotenv from "dotenv";
 import { z } from "zod";
-
-dotenv.config();
 
 const envSchema = z.object({
   DB_URL: z.string(),
@@ -10,6 +7,8 @@ const envSchema = z.object({
   BETTER_AUTH_SECRET: z.string(),
   GITHUB_CLIENT_ID: z.string(),
   GITHUB_CLIENT_SECRET: z.string(),
+  GITHUB_WEBHOOK_SECRET: z.string(),
+  GITHUB_PRIVATE_KEY: z.string(),
 
   CONTROL_PANE_URL: z.string().url().default("http://localhost:5173"),
 });

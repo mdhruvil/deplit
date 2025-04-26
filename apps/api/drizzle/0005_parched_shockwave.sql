@@ -1,0 +1,1 @@
+ALTER TABLE "projects" ADD COLUMN "is_spa" boolean DEFAULT false NOT NULL;

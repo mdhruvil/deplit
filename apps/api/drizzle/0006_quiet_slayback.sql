@@ -1,0 +1,1 @@
+ALTER TABLE "projects" ADD COLUMN "full_name" text NOT NULL;
