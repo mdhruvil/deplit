@@ -3,12 +3,13 @@
   "type": "module",
   "scripts": {
     "dev": "tsx watch src/index.ts",
-    "build": "SKIP_ENV_VALIDATION=true esbuild src/index.ts --bundle --platform=node --target=node22 --outfile=dist/index.cjs",
+    "build": "pnpm run typecheck && SKIP_ENV_VALIDATION=true esbuild src/index.ts --bundle --platform=node --target=node22 --outfile=dist/index.cjs",
     "start": "node dist/index.cjs",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
     "db:studio": "drizzle-kit studio",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@hono/node-server": "^1.13.8",

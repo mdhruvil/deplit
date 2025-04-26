@@ -49,6 +49,7 @@ export const projects = pgTable("projects", {
   creatorId: text("creator_id")
     .notNull()
     .references(() => user.id, { onDelete: "cascade" }),
+  envVars: json("env_vars").$type<Record<string, string>>(),
   ...timestamps,
 });
 
@@ -96,9 +97,12 @@ export const deployments = pgTable("deployments", {
    * metadata of the deployment like
    * - htmlRoutes
    * - assetRoutes
-   * @type {Record<string, string>}
+   * - sizes of the deployment
+   * - isSpa
+   * - notFoundRoute
+   *
    */
-  metadata: json("metadata").$type<Record<string, string>>(),
+  metadata: json("metadata"),
 });
 
 export const deploymentRelations = relations(deployments, ({ one }) => ({

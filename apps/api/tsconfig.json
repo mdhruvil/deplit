@@ -1,7 +1,9 @@
 {
   "extends": "@deplit/typescript-config/base.json",
   "compilerOptions": {
-    "outDir": "dist"
+    "outDir": "dist",
+    "declaration": false,
+    "declarationMap": false
   },
   "include": ["src", "drizzle.config.ts", "drizzle"],
   "exclude": ["node_modules", "dist"]
