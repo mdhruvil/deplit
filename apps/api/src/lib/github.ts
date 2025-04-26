@@ -6,6 +6,14 @@ export const app = new App({
   privateKey: env.GITHUB_PRIVATE_KEY,
 });
 
+/**
+ * Retrieves all repositories accessible to the authenticated user via their GitHub App installations.
+ *
+ * Aggregates repositories from all installations the user has access to, sorts them by last update time in descending order, and returns a simplified array of repository objects with selected fields.
+ *
+ * @param accessToken - The GitHub user access token used for authentication.
+ * @returns A promise that resolves to an array of repository objects, each containing repository and owner details, visibility, URLs, description, timestamps, and default branch.
+ */
 export async function getCurrentUserRepos(accessToken: string) {
   const octokit = new Octokit({ auth: accessToken });
 

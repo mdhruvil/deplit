@@ -3,6 +3,12 @@ import { env } from "../env.js";
 import { DBProjects } from "../db/queries/projects.js";
 import { DBDeployments } from "../db/queries/deployments.js";
 
+/**
+ * Extracts the branch name from a Git ref string.
+ *
+ * @param ref - The Git ref string, typically in the format "refs/heads/branch-name".
+ * @returns The branch name if {@link ref} represents a branch; otherwise, `null`.
+ */
 function getBranchNameFromRef(ref: string) {
   if (typeof ref !== "string") return null;
 
