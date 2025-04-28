@@ -1,14 +1,15 @@
 import { createMiddleware } from "hono/factory";
-import { auth } from "./lib/auth.js";
-import { Env } from "./app.js";
+import { Env } from "..";
+import { auth } from "../lib/auth";
 
 export const authMiddleware = createMiddleware<Env>(async (c, next) => {
   const session = await auth.api.getSession({ headers: c.req.raw.headers });
 
   if (!session) {
-    // TODO: remove this temp user
+    // TODO: remove this temp user in prod or when i figure out how to use better auth with bruno. skill issue.
+    // We are using this temp user to avoid using auth when testing API with Bruno.
     const tempUser = {
-      id: "U3WslvrP7LRxeFctcUURUatkv46ziKa5",
+      id: "4A5YKnXPbjCeicl83001x0iZclISgPjX",
       name: "Dhruvil Moradiya",
       email: "dhruvil1808@gmail.com",
       emailVerified: true,

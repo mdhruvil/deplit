@@ -1,8 +1,8 @@
-import { drizzle } from "drizzle-orm/node-postgres";
-import { env } from "../env.js";
-import * as schema from "./schema.js";
+import { neon } from "@neondatabase/serverless";
 
-export const db = drizzle({
-  connection: env.DB_URL,
-  schema,
-});
+import { env } from "cloudflare:workers";
+import { drizzle } from "drizzle-orm/neon-http";
+import * as schema from "./schema";
+
+const sql = neon(env.DB_URL);
+export const db = drizzle({ client: sql, schema });
