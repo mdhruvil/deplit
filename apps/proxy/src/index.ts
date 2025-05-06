@@ -21,7 +21,7 @@ export default {
       const cacheKey = new URL(`cache://${subdomain}.deplit.tech`);
       let data = await cache.match(cacheKey);
       let kvCacheStatus = data ? "hit" : "miss";
-      let kvCacheHeader = data?.headers.get("cf-cache-status");
+      const kvCacheHeader = data?.headers.get("cf-cache-status");
 
       if (!data) {
         const site = await sites.get(subdomain, {
@@ -67,7 +67,7 @@ export default {
       }
 
       // if the site is spa and the request is for a html route, rewrite the url to the `/index.html` file
-      if (!!site.spa) {
+      if (site.spa) {
         if (site.htmlRoutes[url.pathname]) {
           url.pathname = site.htmlRoutes[url.pathname];
         } else if (!request.headers.get("accept")?.includes("text/html")) {
@@ -78,7 +78,7 @@ export default {
         }
       }
 
-      if (!!site.htmlRoutes[url.pathname]) {
+      if (site.htmlRoutes[url.pathname]) {
         url.pathname =
           ["", subdomain, site.commitHash, ""].join("/") +
           site.htmlRoutes[url.pathname];

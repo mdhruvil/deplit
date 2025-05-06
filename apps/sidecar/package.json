@@ -4,6 +4,7 @@
   "scripts": {
     "dev": "tsx watch --env-file=.env src/index.ts",
     "lint": "eslint .",
+    "typecheck": "tsc --noEmit",
     "build": "esbuild src/index.ts --bundle --platform=node --target=node22 --outfile=dist/index.cjs",
     "start": "node --env-file=.env dist/index.cjs"
   },

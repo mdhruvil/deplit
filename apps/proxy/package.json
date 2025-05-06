@@ -6,10 +6,14 @@
 		"deploy": "wrangler deploy",
 		"dev": "wrangler dev",
 		"start": "wrangler dev",
-		"cf-typegen": "wrangler types"
+		"cf-typegen": "wrangler types",
+		"lint": "eslint .",
+		"typecheck": "tsc --noEmit"
 	},
 	"devDependencies": {
 		"@cloudflare/workers-types": "^4.20250420.0",
+		"@deplit/eslint-config": "workspace:^",
+		"eslint": "^9.20.0",
 		"typescript": "^5.5.2",
 		"wrangler": "^4.12.0"
 	}

@@ -20,6 +20,8 @@ const logFileDest = process.env.DEPLIT_LOG_FILE_DEST!;
 
 export let latestCommitObjectId: string | undefined;
 
+const name: any = "";
+
 async function cleanDest(dest: string) {
   try {
     await fs.rm(dest, { recursive: true, force: true });
