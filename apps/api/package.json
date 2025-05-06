@@ -1,36 +1,28 @@
 {
   "name": "@deplit/api",
-  "type": "module",
+  "version": "0.0.0",
   "scripts": {
-    "dev": "tsx watch src/index.ts",
-    "build": "SKIP_ENV_VALIDATION=true esbuild src/index.ts --bundle --platform=node --target=node22 --outfile=dist/index.cjs",
-    "start": "node dist/index.cjs",
+    "dev": "wrangler dev --port=3000",
+    "deploy": "wrangler deploy --minify",
+    "cf-typegen": "wrangler types --env-interface CloudflareBindings",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
-    "db:studio": "drizzle-kit studio",
-    "lint": "eslint ."
+    "db:studio": "drizzle-kit studio"
   },
   "dependencies": {
-    "@hono/node-server": "^1.13.8",
     "@hono/zod-validator": "^0.4.3",
-    "better-auth": "^1.1.21",
-    "dotenv": "^16.4.7",
-    "drizzle-orm": "^0.39.3",
-    "drizzle-zod": "^0.7.0",
-    "hono": "^4.7.2",
+    "@neondatabase/serverless": "^1.0.0",
+    "better-auth": "^1.2.7",
+    "drizzle-orm": "^0.43.1",
+    "drizzle-zod": "^0.7.1",
+    "hono": "^4.7.7",
+    "postgres": "^3.4.5",
     "zod": "^3.24.2"
   },
   "devDependencies": {
     "@deplit/eslint-config": "workspace:^",
-    "@deplit/typescript-config": "workspace:^",
-    "@esbuild/linux-x64": "0.25.0",
-    "@types/node": "^20.17.19",
-    "@types/pg": "^8.11.11",
-    "drizzle-kit": "^0.30.4",
-    "esbuild": "0.25.0",
+    "drizzle-kit": "^0.31.0",
     "eslint": "^9.20.0",
-    "pg": "^8.13.3",
-    "tsx": "^4.7.1",
-    "typescript": "^5.7.3"
+    "wrangler": "^4.4.0"
   }
 }

@@ -1,13 +1,13 @@
-import { zValidator } from "@hono/zod-validator";
 import { Hono } from "hono";
+import { Env } from "..";
+import { zValidator } from "@hono/zod-validator";
 import { z } from "zod";
-import { Env } from "../app.js";
-import { DBDeployments } from "../db/queries/deployments.js";
+import { DBDeployments } from "../db/queries/deployments";
+import { notFound, unauthorized } from "../utils";
 import {
   deploymentInsertSchema,
   deploymentUpdateSchema,
-} from "../db/validators.js";
-import { notFound, unauthorized } from "../utils.js";
+} from "../db/validators";
 
 const app = new Hono<Env>()
 

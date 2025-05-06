@@ -141,11 +141,28 @@ export default {
       const mainEnd = performance.now();
       const debugHeaders = {
         "deplit-blob-url": url.toString(),
-        "deplit-kv-time": (kvEnd - kvStart).toString(),
-        "deplit-total-time": (mainEnd - mainStart).toString(),
-        "deplit-content-fetch-time": (
-          contentFetchEnd - contentFetchStart
-        ).toString(),
+        "Server-Timing": [
+          {
+            name: "siteMetadata",
+            desc: "Site metadata fetch",
+            dur: kvEnd - kvStart,
+          },
+          {
+            name: "contentFetch",
+            desc: "Content fetch",
+            dur: contentFetchEnd - contentFetchStart,
+          },
+          {
+            name: "total",
+            desc: "Total",
+            dur: mainEnd - mainStart,
+          },
+        ]
+          .map(
+            (header) =>
+              `${header.name};desc="${header.desc}";dur=${header.dur.toFixed(2)}`,
+          )
+          .join(", "),
       };
 
       for (const [key, value] of Object.entries(headers)) {

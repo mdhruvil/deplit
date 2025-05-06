@@ -1,5 +1,5 @@
 import { createInsertSchema } from "drizzle-zod";
-import { deployments, projects } from "./schema.js";
+import { deployments, projects } from "./schema";
 import { z } from "zod";
 
 export const projectInsertSchema = createInsertSchema(projects).omit({

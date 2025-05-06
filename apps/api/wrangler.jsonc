@@ -1,0 +1,7 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "deplit-api",
+  "main": "src/index.ts",
+  "compatibility_date": "2025-04-28",
+  "compatibility_flags": ["nodejs_compat"],
+}

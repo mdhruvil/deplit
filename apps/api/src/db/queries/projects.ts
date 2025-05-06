@@ -1,7 +1,7 @@
 import { and, eq } from "drizzle-orm";
-import { db } from "../index.js";
-import { projects } from "../schema.js";
-import { ProjectInsert, ProjectUpdate } from "../validators.js";
+import { db } from "..";
+import { projects } from "../schema";
+import { ProjectInsert, ProjectUpdate } from "../validators";
 
 export class DBProjects {
   static async create(userId: string, data: ProjectInsert) {

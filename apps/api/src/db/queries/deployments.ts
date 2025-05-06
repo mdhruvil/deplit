@@ -1,7 +1,7 @@
 import { eq } from "drizzle-orm";
-import { db } from "../index.js";
-import { deployments } from "../schema.js";
-import { DeploymentInsert, DeploymentUpdate } from "../validators.js";
+import { db } from "..";
+import { deployments } from "../schema";
+import { DeploymentInsert, DeploymentUpdate } from "../validators";
 
 export class DBDeployments {
   static async create(projectId: string, data: DeploymentInsert) {
