@@ -2,7 +2,7 @@
   "name": "@deplit/api",
   "version": "0.0.0",
   "scripts": {
-    "dev": "wrangler dev --port=3000",
+    "dev": "wrangler dev --port=3000 --show-interactive-dev-session false",
     "deploy": "wrangler deploy --minify",
     "cf-typegen": "wrangler types --env-interface CloudflareBindings",
     "db:generate": "drizzle-kit generate",

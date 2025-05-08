@@ -1,23 +1,21 @@
 import { Hono } from "hono";
-import { Env } from "..";
-import { notFound, unauthorized } from "../utils";
-import { DBProjects } from "../db/queries/projects";
-import { zValidator } from "@hono/zod-validator";
 import { z } from "zod";
+import { Env } from "..";
+import { DBProjects } from "../db/queries/projects";
 import { projectInsertSchema, projectUpdateSchema } from "../db/validators";
+import { zValidator } from "../middleware/z-validator";
+import { notFound, unauthorized } from "../utils";
 
 const app = new Hono<Env>()
-
   .get("/", async (c) => {
     const user = c.get("user");
     if (!user) {
-      return unauthorized(c);
+      throw unauthorized();
     }
 
     const projects = await DBProjects.findAll(user.id);
-    return c.json({ data: projects });
+    return c.json({ data: projects, success: true });
   })
-
   .get(
     "/:projectId",
     zValidator(
@@ -27,6 +25,11 @@ const app = new Hono<Env>()
       }),
     ),
     async (c) => {
+      const user = c.get("user");
+      if (!user) {
+        throw unauthorized();
+      }
+
       const { projectId } = c.req.valid("param");
       const project = await DBProjects.findById(projectId);
 
@@ -34,20 +37,20 @@ const app = new Hono<Env>()
         return notFound(c, "Project not found");
       }
 
-      return c.json({ data: project });
+      return c.json({ data: project, success: true });
     },
   )
 
   .post("/", zValidator("json", projectInsertSchema), async (c) => {
     const user = c.get("user");
     if (!user) {
-      return unauthorized(c);
+      throw unauthorized();
     }
 
     const projectData = c.req.valid("json");
 
     const result = await DBProjects.create(user.id, projectData);
-    return c.json({ data: result });
+    return c.json({ data: result, success: true });
   })
 
   .put(
@@ -57,14 +60,14 @@ const app = new Hono<Env>()
     async (c) => {
       const user = c.get("user");
       if (!user) {
-        return unauthorized(c);
+        throw unauthorized();
       }
 
       const { projectId } = c.req.valid("param");
       const projectData = c.req.valid("json");
 
       const result = await DBProjects.update(projectId, user.id, projectData);
-      return c.json({ data: result });
+      return c.json({ data: result, success: true });
     },
   )
 
@@ -74,12 +77,12 @@ const app = new Hono<Env>()
     async (c) => {
       const user = c.get("user");
       if (!user) {
-        return unauthorized(c);
+        throw unauthorized();
       }
 
       const { projectId } = c.req.valid("param");
       const result = await DBProjects.delete(projectId, user.id);
-      return c.json({ data: result });
+      return c.json({ data: result, success: true });
     },
   );
 

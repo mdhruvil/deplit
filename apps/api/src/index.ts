@@ -1,10 +1,12 @@
-import { Hono } from "hono";
-import { auth } from "./lib/auth";
-import { cors } from "hono/cors";
 import { env } from "cloudflare:workers";
+import { Hono } from "hono";
+import { cors } from "hono/cors";
+import { HTTPException } from "hono/http-exception";
+import { auth } from "./lib/auth";
 import { authMiddleware } from "./middleware/auth";
-import { projectsRouter } from "./routers/projects";
 import { deploymentsRouter } from "./routers/deployments";
+import { projectsRouter } from "./routers/projects";
+import { notFound } from "./utils";
 
 export type Env = {
   Variables: {
@@ -28,15 +30,25 @@ const app = new Hono<Env>({ strict: false })
   .use(authMiddleware)
   .get("/", (c) => {
     console.log("Hell yeahh");
-    return c.json({ message: "hell yeah" });
+    return c.json({ success: true, message: "Hello Hono!" });
   })
   .on(["POST", "GET"], "/auth/**", (c) => auth.handler(c.req.raw))
   .get("/auth-redirect", (c) => c.redirect(`${env.CONTROL_PANE_URL}/profile`))
   .route("/project", projectsRouter)
   .route("/project/:projectId/deployment", deploymentsRouter)
+  .notFound((c) => {
+    return notFound(c, "Not Found");
+  })
   .onError((err, c) => {
     console.error(err);
-    return c.json({ error: err.message }, 500);
+    if (err instanceof HTTPException) {
+      return c.json({ success: false, error: err.message }, err.status);
+    } else {
+      return c.json(
+        { success: false, error: err.message ?? "Internal Server Error" },
+        500,
+      );
+    }
   });
 
 app.get("/", (c) => {
