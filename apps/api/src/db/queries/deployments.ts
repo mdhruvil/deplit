@@ -29,6 +29,7 @@ export class DBDeployments {
   static async findAll(projectId: string) {
     const result = await db.query.deployments.findMany({
       where: (deployment, { eq }) => eq(deployment.projectId, projectId),
+      orderBy: (deployment, { desc }) => desc(deployment.gitCommitTimestamp),
     });
     return result;
   }

@@ -5,6 +5,7 @@ import { HTTPException } from "hono/http-exception";
 import { auth } from "./lib/auth";
 import { authMiddleware } from "./middleware/auth";
 import { deploymentsRouter } from "./routers/deployments";
+import { githubRouter } from "./routers/github";
 import { projectsRouter } from "./routers/projects";
 import { notFound } from "./utils";
 
@@ -36,6 +37,7 @@ const app = new Hono<Env>({ strict: false })
   .get("/auth-redirect", (c) => c.redirect(`${env.CONTROL_PANE_URL}/profile`))
   .route("/project", projectsRouter)
   .route("/project/:projectId/deployment", deploymentsRouter)
+  .route("/github", githubRouter)
   .notFound((c) => {
     return notFound(c, "Not Found. path: " + c.req.path);
   })
