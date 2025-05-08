@@ -1,47 +1,35 @@
 import { relations, sql } from "drizzle-orm";
-import {
-  boolean,
-  integer,
-  json,
-  pgTable,
-  serial,
-  text,
-  timestamp,
-  uuid,
-} from "drizzle-orm/pg-core";
 
-export const todo = pgTable("todos", {
-  id: serial().primaryKey(),
-  task: text().notNull(),
-  completed: boolean().notNull().default(false),
-});
+import { integer, sqliteTable, text } from "drizzle-orm/sqlite-core";
 
 const timestamps = {
-  createdAt: timestamp("created_at").defaultNow().notNull(),
-  updatedAt: timestamp("updated_at")
-    .defaultNow()
-    .$onUpdateFn(() => new Date())
+  createdAt: integer("created_at", { mode: "timestamp" })
+    .default(sql`(CURRENT_TIMESTAMP)`)
+    .notNull(),
+  updatedAt: integer("updated_at", { mode: "timestamp" })
+    .default(sql`(CURRENT_TIMESTAMP)`)
+    .$onUpdate(() => new Date())
     .notNull(),
 };
 
-export const user = pgTable("user", {
+export const user = sqliteTable("user", {
   id: text("id").primaryKey(),
   name: text("name").notNull(),
   email: text("email").notNull().unique(),
-  emailVerified: boolean("email_verified").notNull(),
+  emailVerified: integer("email_verified", { mode: "boolean" }).notNull(),
   image: text("image"),
-  createdAt: timestamp("created_at").notNull(),
-  updatedAt: timestamp("updated_at").notNull(),
+  createdAt: integer("created_at", { mode: "timestamp" }).notNull(),
+  updatedAt: integer("updated_at", { mode: "timestamp" }).notNull(),
 });
 
 export const userRelations = relations(user, ({ many }) => ({
   projects: many(projects),
 }));
 
-export const projects = pgTable("projects", {
-  id: uuid("id")
+export const projects = sqliteTable("projects", {
+  id: text("id")
     .primaryKey()
-    .default(sql`uuid_generate_v4()`)
+    .$defaultFn(() => crypto.randomUUID())
     .notNull(),
   slug: text("slug").notNull().unique(),
   name: text("name").notNull(),
@@ -57,12 +45,12 @@ export const projectRelations = relations(projects, ({ one, many }) => ({
   deployments: many(deployments),
 }));
 
-export const deployments = pgTable("deployments", {
-  id: uuid("id")
+export const deployments = sqliteTable("deployments", {
+  id: text("id")
     .primaryKey()
-    .default(sql`uuid_generate_v4()`)
+    .$defaultFn(() => crypto.randomUUID())
     .notNull(),
-  projectId: uuid("project_id")
+  projectId: text("project_id")
     .notNull()
     .references(() => projects.id, { onDelete: "cascade" }),
   gitCommitHash: text("git_commit_hash").notNull(),
@@ -88,8 +76,8 @@ export const deployments = pgTable("deployments", {
   /**
    * alias of the deployment
    * For
-   * - production deployment: alias = <project-slug>.deplit.live
-   * - preview deployment: alias = <project-slug>-<git-commit-short-sha>.deplit.live
+   * - production deployment: alias = [project-slug].deplit.live
+   * - preview deployment: alias = [project-slug]-[git-commit-short-sha].deplit.live
    */
   alias: text("alias").notNull(),
   /**
@@ -98,7 +86,7 @@ export const deployments = pgTable("deployments", {
    * - assetRoutes
    * @type {Record<string, string>}
    */
-  metadata: json("metadata").$type<Record<string, string>>(),
+  metadata: text("metadata", { mode: "json" }).$type<Record<string, string>>(),
 });
 
 export const deploymentRelations = relations(deployments, ({ one }) => ({
@@ -108,12 +96,12 @@ export const deploymentRelations = relations(deployments, ({ one }) => ({
   }),
 }));
 
-export const session = pgTable("session", {
+export const session = sqliteTable("session", {
   id: text("id").primaryKey(),
-  expiresAt: timestamp("expires_at").notNull(),
+  expiresAt: integer("expires_at", { mode: "timestamp" }).notNull(),
   token: text("token").notNull().unique(),
-  createdAt: timestamp("created_at").notNull(),
-  updatedAt: timestamp("updated_at").notNull(),
+  createdAt: integer("created_at", { mode: "timestamp" }).notNull(),
+  updatedAt: integer("updated_at", { mode: "timestamp" }).notNull(),
   ipAddress: text("ip_address"),
   userAgent: text("user_agent"),
   userId: text("user_id")
@@ -121,7 +109,7 @@ export const session = pgTable("session", {
     .references(() => user.id, { onDelete: "cascade" }),
 });
 
-export const account = pgTable("account", {
+export const account = sqliteTable("account", {
   id: text("id").primaryKey(),
   accountId: text("account_id").notNull(),
   providerId: text("provider_id").notNull(),
@@ -131,19 +119,23 @@ export const account = pgTable("account", {
   accessToken: text("access_token"),
   refreshToken: text("refresh_token"),
   idToken: text("id_token"),
-  accessTokenExpiresAt: timestamp("access_token_expires_at"),
-  refreshTokenExpiresAt: timestamp("refresh_token_expires_at"),
+  accessTokenExpiresAt: integer("access_token_expires_at", {
+    mode: "timestamp",
+  }),
+  refreshTokenExpiresAt: integer("refresh_token_expires_at", {
+    mode: "timestamp",
+  }),
   scope: text("scope"),
   password: text("password"),
-  createdAt: timestamp("created_at").notNull(),
-  updatedAt: timestamp("updated_at").notNull(),
+  createdAt: integer("created_at", { mode: "timestamp" }).notNull(),
+  updatedAt: integer("updated_at", { mode: "timestamp" }).notNull(),
 });
 
-export const verification = pgTable("verification", {
+export const verification = sqliteTable("verification", {
   id: text("id").primaryKey(),
   identifier: text("identifier").notNull(),
   value: text("value").notNull(),
-  expiresAt: timestamp("expires_at").notNull(),
-  createdAt: timestamp("created_at"),
-  updatedAt: timestamp("updated_at"),
+  expiresAt: integer("expires_at", { mode: "timestamp" }).notNull(),
+  createdAt: integer("created_at", { mode: "timestamp" }),
+  updatedAt: integer("updated_at", { mode: "timestamp" }),
 });

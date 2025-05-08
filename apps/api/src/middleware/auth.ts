@@ -9,7 +9,7 @@ export const authMiddleware = createMiddleware<Env>(async (c, next) => {
     // TODO: remove this temp user in prod or when i figure out how to use better auth with bruno. skill issue.
     // We are using this temp user to avoid using auth when testing API with Bruno.
     const tempUser = {
-      id: "4A5YKnXPbjCeicl83001x0iZclISgPjX",
+      id: "0dgth505g29d5nza1IlDT4n1HgJGpO6C",
       name: "Dhruvil Moradiya",
       email: "dhruvil1808@gmail.com",
       emailVerified: true,

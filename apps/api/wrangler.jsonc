@@ -4,4 +4,12 @@
   "main": "src/index.ts",
   "compatibility_date": "2025-04-28",
   "compatibility_flags": ["nodejs_compat"],
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_id": "0d658edd-d8f8-46ab-a02f-97446d46bc4e",
+      "database_name": "deplit-db",
+      "migrations_dir": "./drizzle-d1",
+    },
+  ],
 }

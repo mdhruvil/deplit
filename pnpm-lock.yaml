@@ -23,9 +23,6 @@ importers:
       '@hono/zod-validator':
         specifier: ^0.4.3
         version: 0.4.3(hono@4.7.7)(zod@3.24.2)
-      '@neondatabase/serverless':
-        specifier: ^1.0.0
-        version: 1.0.0
       better-auth:
         specifier: ^1.2.7
         version: 1.2.7
@@ -38,9 +35,6 @@ importers:
       hono:
         specifier: ^4.7.7
         version: 4.7.7
-      postgres:
-        specifier: ^3.4.5
-        version: 3.4.5
       zod:
         specifier: ^3.24.2
         version: 3.24.2
@@ -48,6 +42,9 @@ importers:
       '@deplit/eslint-config':
         specifier: workspace:^
         version: link:../../packages/eslint-config
+      '@types/node':
+        specifier: ^22.15.16
+        version: 22.15.16
       drizzle-kit:
         specifier: ^0.31.0
         version: 0.31.0
@@ -2055,6 +2052,9 @@ packages:
   '@types/node@22.13.8':
     resolution: {integrity: sha512-G3EfaZS+iOGYWLLRCEAXdWK9my08oHNZ+FHluRiggIYJPOXzhOiDgpVCUHaUvyIC5/fj7C/p637jdzC666AOKQ==}
 
+  '@types/node@22.15.16':
+    resolution: {integrity: sha512-3pr+KjwpVujqWqOKT8mNR+rd09FqhBLwg+5L/4t0cNYBzm/yEiYGCxWttjaPBsLtAo+WFNoXzGJfolM1JuRXoA==}
+
   '@types/pg@8.11.11':
     resolution: {integrity: sha512-kGT1qKM8wJQ5qlawUrEkXgvMSXoV213KfMGXcwfDwUIfUHXqXYXOfS1nE1LINRJVVVx5wCm70XnFlMHaIcQAfw==}
 
@@ -4015,9 +4015,6 @@ packages:
     peerDependencies:
       pg: '>=8.0'
 
-  pg-protocol@1.7.1:
-    resolution: {integrity: sha512-gjTHWGYWsEgy9MsY0Gp6ZJxV24IjDqdpTW7Eh0x+WfJLFsm/TJx1MzL6T0D88mBvkpxotCQ6TwW6N+Kko7lhgQ==}
-
   pg-protocol@1.9.5:
     resolution: {integrity: sha512-DYTWtWpfd5FOro3UnAfwvhD8jh59r2ig8bPtc9H8Ds7MscE/9NYruUQWFAOuraRl29jwcT2kyMFQ3MxeaVjUhg==}
 
@@ -4764,6 +4761,9 @@ packages:
 
   undici-types@6.20.0:
     resolution: {integrity: sha512-Ny6QZ2Nju20vw1SRHe3d9jVu6gJ+4e3+MMpqu7pqE5HT6WsTSlce++GQmK5UXS8mzV8DSYHrQH+Xrf2jVcuKNg==}
+
+  undici-types@6.21.0:
+    resolution: {integrity: sha512-iwDZqg0QAGrg9Rav5H4n0M64c3mkR59cJ6wQp+7C4nI0gsmExaedaYLNO44eT4AtBBwjbTiGPMlt2Md0T9H9JQ==}
 
   undici@5.28.5:
     resolution: {integrity: sha512-zICwjrDrcrUE0pyyJc1I2QzBkLM8FINsgOrt6WjA+BgajVq9Nxu2PbFFXUrAggLfDXlZGZBVZYw7WNV5KiBiBA==}
@@ -6049,8 +6049,9 @@ snapshots:
 
   '@neondatabase/serverless@1.0.0':
     dependencies:
-      '@types/node': 22.13.8
+      '@types/node': 22.15.16
       '@types/pg': 8.11.11
+    optional: true
 
   '@next/eslint-plugin-next@15.1.6':
     dependencies:
@@ -6467,11 +6468,16 @@ snapshots:
     dependencies:
       undici-types: 6.20.0
 
+  '@types/node@22.15.16':
+    dependencies:
+      undici-types: 6.21.0
+
   '@types/pg@8.11.11':
     dependencies:
-      '@types/node': 22.13.8
-      pg-protocol: 1.7.1
+      '@types/node': 22.15.16
+      pg-protocol: 1.9.5
       pg-types: 4.0.2
+    optional: true
 
   '@types/react-dom@19.0.3(@types/react@19.0.8)':
     dependencies:
@@ -6495,7 +6501,7 @@ snapshots:
 
   '@types/ws@8.18.1':
     dependencies:
-      '@types/node': 22.13.8
+      '@types/node': 22.15.16
     optional: true
 
   '@typescript-eslint/eslint-plugin@8.23.0(@typescript-eslint/parser@8.23.0(eslint@9.20.0(jiti@2.4.2))(typescript@5.7.3))(eslint@9.20.0(jiti@2.4.2))(typescript@5.7.3)':
@@ -8614,7 +8620,8 @@ snapshots:
       define-properties: 1.2.1
       es-object-atoms: 1.1.1
 
-  obuf@1.1.2: {}
+  obuf@1.1.2:
+    optional: true
 
   ohash@2.0.11: {}
 
@@ -8777,16 +8784,16 @@ snapshots:
   pg-connection-string@2.8.5:
     optional: true
 
-  pg-int8@1.0.1: {}
+  pg-int8@1.0.1:
+    optional: true
 
-  pg-numeric@1.0.2: {}
+  pg-numeric@1.0.2:
+    optional: true
 
   pg-pool@3.9.6(pg@8.13.3):
     dependencies:
       pg: 8.13.3
     optional: true
-
-  pg-protocol@1.7.1: {}
 
   pg-protocol@1.9.5:
     optional: true
@@ -8809,6 +8816,7 @@ snapshots:
       postgres-date: 2.1.0
       postgres-interval: 3.0.0
       postgres-range: 1.1.4
+    optional: true
 
   pg@8.13.3:
     dependencies:
@@ -8845,7 +8853,8 @@ snapshots:
   postgres-array@2.0.0:
     optional: true
 
-  postgres-array@3.0.2: {}
+  postgres-array@3.0.2:
+    optional: true
 
   postgres-bytea@1.0.0:
     optional: true
@@ -8853,22 +8862,27 @@ snapshots:
   postgres-bytea@3.0.0:
     dependencies:
       obuf: 1.1.2
+    optional: true
 
   postgres-date@1.0.7:
     optional: true
 
-  postgres-date@2.1.0: {}
+  postgres-date@2.1.0:
+    optional: true
 
   postgres-interval@1.2.0:
     dependencies:
       xtend: 4.0.2
     optional: true
 
-  postgres-interval@3.0.0: {}
+  postgres-interval@3.0.0:
+    optional: true
 
-  postgres-range@1.1.4: {}
+  postgres-range@1.1.4:
+    optional: true
 
-  postgres@3.4.5: {}
+  postgres@3.4.5:
+    optional: true
 
   prelude-ls@1.2.1: {}
 
@@ -9593,6 +9607,8 @@ snapshots:
   undici-types@6.19.8: {}
 
   undici-types@6.20.0: {}
+
+  undici-types@6.21.0: {}
 
   undici@5.28.5:
     dependencies:
