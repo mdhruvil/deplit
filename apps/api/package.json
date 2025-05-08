@@ -6,8 +6,12 @@
     "deploy": "wrangler deploy --minify",
     "cf-typegen": "wrangler types --env-interface CloudflareBindings",
     "db:generate": "drizzle-kit generate",
-    "db:migrate": "drizzle-kit migrate",
-    "db:studio": "drizzle-kit studio",
+    "db:migrate:list:local": "wrangler d1 migrations list DB",
+    "db:migrate:list:remote": "wrangler d1 migrations list DB --remote",
+    "db:migrate:local": "wrangler d1 migrations apply DB",
+    "db:migrate:remote": "wrangler d1 migrations apply DB --remote",
+    "db:studio:local": "drizzle-kit studio",
+    "db:studio:remote": "NODE_ENV=production drizzle-kit studio",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit"
   },
@@ -23,6 +27,7 @@
   },
   "devDependencies": {
     "@deplit/eslint-config": "workspace:^",
+    "@types/node": "^22.15.16",
     "drizzle-kit": "^0.31.0",
     "eslint": "^9.20.0",
     "wrangler": "^4.4.0"
