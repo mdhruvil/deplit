@@ -37,7 +37,7 @@ const app = new Hono<Env>({ strict: false })
   .route("/project", projectsRouter)
   .route("/project/:projectId/deployment", deploymentsRouter)
   .notFound((c) => {
-    return notFound(c, "Not Found");
+    return notFound(c, "Not Found. path: " + c.req.path);
   })
   .onError((err, c) => {
     console.error(err);
@@ -50,9 +50,5 @@ const app = new Hono<Env>({ strict: false })
       );
     }
   });
-
-app.get("/", (c) => {
-  return c.text("Hello Hono!");
-});
 
 export default app;
