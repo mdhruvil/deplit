@@ -1,11 +1,12 @@
 import { Webhooks } from "@octokit/webhooks";
 import { env } from "cloudflare:workers";
 import { Hono } from "hono";
+import { HTTPException } from "hono/http-exception";
 import { Env } from "..";
 import { getAccountFromUserId } from "../lib/auth";
 import { getCurrentUserRepos } from "../lib/github";
-import { notFound, unauthorized } from "../utils";
 import { handleGithubPushEvent } from "../lib/github-webhook";
+import { notFound, unauthorized } from "../utils";
 
 const app = new Hono<Env>()
   .post("/webhook", async (c) => {
@@ -19,7 +20,7 @@ const app = new Hono<Env>()
         id,
         event,
       });
-      return c.json({ error: "Missing headers" }, 400);
+      throw new HTTPException(400, { message: "Missing headers" });
     }
 
     const body = await c.req.raw.text();
@@ -33,7 +34,7 @@ const app = new Hono<Env>()
     const isValid = await webhook.verify(body, signature);
 
     if (!isValid) {
-      return c.json({ error: "Invalid signature" }, 401);
+      throw new HTTPException(401, { message: "Invalid signature" });
     }
 
     await webhook.receive({
