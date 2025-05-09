@@ -39,6 +39,14 @@ export async function createVercelConfig({
   await fs.writeFile(projectJsonPath, JSON.stringify(projectJsonContent));
 }
 
+/**
+ * Runs the Vercel build process in the specified directory using the configuration at `.vercel/project.json`.
+ *
+ * Spawns a child process to execute the `vercel build` command, logging all output lines. Resolves when the build completes successfully.
+ *
+ * @param dest - The directory containing the project to build.
+ * @throws {Error} If the build process exits with a nonzero code or fails to start.
+ */
 export function runVercelBuild(dest: string): Promise<void> {
   const vercelDir = path.join(dest, ".vercel");
   const projectJsonPath = path.join(vercelDir, "project.json");

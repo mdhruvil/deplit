@@ -14,6 +14,11 @@ const blobServiceClient = new BlobServiceClient(
   new DefaultAzureCredential(),
 );
 
+/**
+ * Ensures that a blob storage container for the current project exists, creating it if necessary.
+ *
+ * @returns The {@link ContainerClient} for the project's container.
+ */
 async function createContainerIfNotExists() {
   const containerClient = blobServiceClient.getContainerClient(projectId);
   const exists = await containerClient.exists();
@@ -34,6 +39,16 @@ type UploadDirRecursivelyArgs = {
 
 let globalContainerClient: ContainerClient;
 
+/**
+ * Recursively uploads all files from a local directory to an Azure Blob Storage container, organizing them under a path prefixed by the current Git commit SHA.
+ *
+ * Skips execution if running in a development environment.
+ *
+ * @param localCurrentDirPath - The path to the directory whose contents should be uploaded.
+ * @param localBaseDirPath - The root directory used to compute relative paths for blob storage organization. Defaults to {@link localCurrentDirPath}.
+ *
+ * @throws {Error} If {@link gitCommitSha} is not defined when attempting to upload a file.
+ */
 export async function uploadDirRecursively({
   localCurrentDirPath,
   localBaseDirPath = localCurrentDirPath,

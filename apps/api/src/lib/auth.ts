@@ -24,6 +24,12 @@ export const auth = betterAuth({
   },
 });
 
+/**
+ * Retrieves the first account associated with the specified user ID.
+ *
+ * @param userId - The unique identifier of the user whose account is being queried.
+ * @returns The account object if found, or undefined if no matching account exists.
+ */
 export async function getAccountFromUserId(userId: string) {
   const account = await db.query.account.findFirst({
     where: (account, { eq }) => eq(account.userId, userId),
