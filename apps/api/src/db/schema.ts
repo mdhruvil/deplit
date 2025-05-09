@@ -39,6 +39,7 @@ export const projects = sqliteTable("projects", {
   creatorId: text("creator_id")
     .notNull()
     .references(() => user.id, { onDelete: "cascade" }),
+  envVars: text("env_vars", { mode: "json" }),
   ...timestamps,
 });
 
@@ -89,7 +90,6 @@ export const deployments = sqliteTable("deployments", {
    * - htmlRoutes
    * - assetRoutes
    * - size of the deployment
-   * - isSPA
    * - not found route
    * TODO: decide the format of the metadata
    */

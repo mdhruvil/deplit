@@ -7,6 +7,7 @@ import { authMiddleware } from "./middleware/auth";
 import { deploymentsRouter } from "./routers/deployments";
 import { githubRouter } from "./routers/github";
 import { projectsRouter } from "./routers/projects";
+import { sidecarRouter } from "./routers/sidecar";
 import { notFound } from "./utils";
 
 export type Env = {
@@ -38,6 +39,11 @@ const app = new Hono<Env>({ strict: false })
   .route("/project", projectsRouter)
   .route("/project/:projectId/deployment", deploymentsRouter)
   .route("/github", githubRouter)
+  /**
+   * This router handles requests coming from the sidecar.
+   * This router is secured with the `API_SIDECAR_KEY`
+   */
+  .route("/sidecar", sidecarRouter)
   .notFound((c) => {
     return notFound(c, "Not Found. path: " + c.req.path);
   })

@@ -20,4 +20,5 @@ export const routeMetadataSchema = z.object({
 export const metadataSchema = z.object({
   htmlRoutes: z.array(routeMetadataSchema),
   assetsRoutes: z.array(routeMetadataSchema),
+  buildDurationMs: z.number(),
 });

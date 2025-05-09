@@ -54,6 +54,7 @@ export class Sidecar {
   async updateMetadata(data: {
     htmlRoutes: RouteMetadata[];
     assetsRoutes: RouteMetadata[];
+    buildDurationMs: number;
   }) {
     const response = await this.$fetch("/metadata", {
       method: "POST",

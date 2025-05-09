@@ -56,6 +56,7 @@ async function main() {
   await cleanDest(cloneDest);
   await cleanDest(outDir);
 
+  const buildStartTime = performance.now();
   logger.info(`Cloning ${gitUrl} (Branch: ${branch})`);
   await cloneRepo({
     url: gitUrl,
@@ -116,9 +117,11 @@ async function main() {
     outDir,
   );
 
+  const buildDurationMs = performance.now() - buildStartTime;
   await sidecar.updateMetadata({
     htmlRoutes: htmlRoutesMetadata,
     assetsRoutes: assetsRoutesMetadata,
+    buildDurationMs,
   });
 }
 
