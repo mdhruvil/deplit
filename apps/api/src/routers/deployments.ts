@@ -1,16 +1,15 @@
 import { Hono } from "hono";
-import { Env } from "..";
-import { zValidator } from "@hono/zod-validator";
 import { z } from "zod";
+import { Env } from "..";
 import { DBDeployments } from "../db/queries/deployments";
-import { notFound, unauthorized } from "../utils";
 import {
   deploymentInsertSchema,
   deploymentUpdateSchema,
 } from "../db/validators";
+import { zValidator } from "../middleware/z-validator";
+import { notFound, unauthorized } from "../utils";
 
 const app = new Hono<Env>()
-
   .get(
     "/",
     zValidator(
@@ -20,10 +19,15 @@ const app = new Hono<Env>()
       }),
     ),
     async (c) => {
+      const user = c.get("user");
+      if (!user) {
+        throw unauthorized();
+      }
+
       const { projectId } = c.req.valid("param");
 
       const deployments = await DBDeployments.findAll(projectId);
-      return c.json({ data: deployments });
+      return c.json({ data: deployments, success: true });
     },
   )
 
@@ -37,6 +41,11 @@ const app = new Hono<Env>()
       }),
     ),
     async (c) => {
+      const user = c.get("user");
+      if (!user) {
+        throw unauthorized();
+      }
+
       const { projectId, deploymentId } = c.req.valid("param");
       const deployment = await DBDeployments.findById(deploymentId, projectId);
 
@@ -44,7 +53,7 @@ const app = new Hono<Env>()
         return notFound(c, "Deployment not found");
       }
 
-      return c.json({ data: deployment });
+      return c.json({ data: deployment, success: true });
     },
   )
 
@@ -60,13 +69,13 @@ const app = new Hono<Env>()
     async (c) => {
       const user = c.get("user");
       if (!user) {
-        return unauthorized(c);
+        throw unauthorized();
       }
       const { projectId } = c.req.valid("param");
       const deploymentData = c.req.valid("json");
 
       const result = await DBDeployments.create(projectId, deploymentData);
-      return c.json({ data: result });
+      return c.json({ data: result, success: true });
     },
   )
 
@@ -83,14 +92,14 @@ const app = new Hono<Env>()
     async (c) => {
       const user = c.get("user");
       if (!user) {
-        return unauthorized(c);
+        throw unauthorized();
       }
 
       const { deploymentId } = c.req.valid("param");
       const deploymentData = c.req.valid("json");
 
       const result = await DBDeployments.update(deploymentId, deploymentData);
-      return c.json({ data: result });
+      return c.json({ data: result, success: true });
     },
   )
 
@@ -106,12 +115,12 @@ const app = new Hono<Env>()
     async (c) => {
       const user = c.get("user");
       if (!user) {
-        return unauthorized(c);
+        throw unauthorized();
       }
 
       const { deploymentId } = c.req.valid("param");
       const result = await DBDeployments.delete(deploymentId);
-      return c.json({ data: result });
+      return c.json({ data: result, success: true });
     },
   );
 

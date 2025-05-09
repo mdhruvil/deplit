@@ -6,6 +6,7 @@
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
     "build": "esbuild src/index.ts --bundle --platform=node --target=node22 --outfile=dist/index.cjs",
+    "prestart": "pnpm run build",
     "start": "node --env-file=.env dist/index.cjs"
   },
   "dependencies": {

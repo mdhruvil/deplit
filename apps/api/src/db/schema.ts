@@ -1,13 +1,12 @@
-import { relations, sql } from "drizzle-orm";
-
+import { relations } from "drizzle-orm";
 import { integer, sqliteTable, text } from "drizzle-orm/sqlite-core";
 
 const timestamps = {
   createdAt: integer("created_at", { mode: "timestamp" })
-    .default(sql`(CURRENT_TIMESTAMP)`)
+    .$defaultFn(() => new Date())
     .notNull(),
   updatedAt: integer("updated_at", { mode: "timestamp" })
-    .default(sql`(CURRENT_TIMESTAMP)`)
+    .$defaultFn(() => new Date())
     .$onUpdate(() => new Date())
     .notNull(),
 };
@@ -33,10 +32,14 @@ export const projects = sqliteTable("projects", {
     .notNull(),
   slug: text("slug").notNull().unique(),
   name: text("name").notNull(),
+  fullName: text("full_name").notNull(),
+  framework: text("framework"),
+  isSPA: integer("is_spa", { mode: "boolean" }).notNull().default(false),
   githubUrl: text("github_url").notNull(),
   creatorId: text("creator_id")
     .notNull()
     .references(() => user.id, { onDelete: "cascade" }),
+  envVars: text("env_vars", { mode: "json" }),
   ...timestamps,
 });
 
@@ -57,7 +60,9 @@ export const deployments = sqliteTable("deployments", {
   gitRef: text("git_ref").notNull(),
   gitCommitMessage: text("git_commit_message").notNull(),
   gitCommitAuthorName: text("git_commit_author_name").notNull(),
-  framework: text("framework").notNull(),
+  gitCommitTimestamp: integer("git_commit_timestamp", {
+    mode: "timestamp",
+  }).notNull(),
   buildStatus: text("build_status", {
     enum: ["IN_QUEUE", "BUILDING", "SUCCESS", "FAILED"],
   })
@@ -84,9 +89,13 @@ export const deployments = sqliteTable("deployments", {
    * metadata of the deployment like
    * - htmlRoutes
    * - assetRoutes
-   * @type {Record<string, string>}
+   * - size of the deployment
+   * - not found route
+   * TODO: decide the format of the metadata
    */
-  metadata: text("metadata", { mode: "json" }).$type<Record<string, string>>(),
+  metadata: text("metadata", { mode: "json" }),
+
+  ...timestamps,
 });
 
 export const deploymentRelations = relations(deployments, ({ one }) => ({

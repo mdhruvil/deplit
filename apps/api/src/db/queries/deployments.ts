@@ -1,4 +1,4 @@
-import { eq } from "drizzle-orm";
+import { and, eq, ne } from "drizzle-orm";
 import { db } from "..";
 import { deployments } from "../schema";
 import { DeploymentInsert, DeploymentUpdate } from "../validators";
@@ -29,6 +29,7 @@ export class DBDeployments {
   static async findAll(projectId: string) {
     const result = await db.query.deployments.findMany({
       where: (deployment, { eq }) => eq(deployment.projectId, projectId),
+      orderBy: (deployment, { desc }) => desc(deployment.gitCommitTimestamp),
     });
     return result;
   }
@@ -40,6 +41,25 @@ export class DBDeployments {
         ...data,
       })
       .where(eq(deployments.id, id));
+    return result;
+  }
+
+  static async setAllProdDeploymentsToInactiveExcept(
+    id: string,
+    projectId: string,
+  ) {
+    const result = await db
+      .update(deployments)
+      .set({
+        activeState: "INACTIVE",
+      })
+      .where(
+        and(
+          eq(deployments.projectId, projectId),
+          ne(deployments.id, id),
+          eq(deployments.activeState, "ACTIVE"),
+        ),
+      );
     return result;
   }
 

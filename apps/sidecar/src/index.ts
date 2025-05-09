@@ -2,13 +2,35 @@ import { serve } from "@hono/node-server";
 import { zValidator } from "@hono/zod-validator";
 import { Hono } from "hono";
 import { bearerAuth } from "hono/bearer-auth";
-import { ingestLogsSchema, updateBuildStatusSchema } from "./validators.js";
+import {
+  ingestLogsSchema,
+  metadataSchema,
+  updateBuildStatusSchema,
+} from "./validators.js";
+import { BackendApiClient } from "./backend-api-client.js";
 
-const token = process.env.DEPLIT_INTERNAL_API_TOKEN;
-if (!token) {
-  console.error("DEPLIT_INTERNAL_API_TOKEN environment variable is not set");
+const requiredEnvVars = [
+  "DEPLIT_INTERNAL_API_TOKEN",
+  "DEPLIT_BACKEND_API_URL",
+  "DEPLIT_API_SIDECAR_KEY",
+  "DEPLIT_DEPLOYMENT_ID",
+  "DEPLIT_PROJECT_ID",
+];
+
+const missingEnvVars = requiredEnvVars.filter((envVar) => !process.env[envVar]);
+
+if (missingEnvVars.length > 0) {
+  console.error(`Missing environment variables: ${missingEnvVars.join(", ")}`);
   process.exit(1);
 }
+
+const token = process.env.DEPLIT_INTERNAL_API_TOKEN!;
+const backendApiUrl = process.env.DEPLIT_BACKEND_API_URL!;
+const apiSidecarKey = process.env.DEPLIT_API_SIDECAR_KEY!;
+const deploymentId = process.env.DEPLIT_DEPLOYMENT_ID!;
+const projectId = process.env.DEPLIT_PROJECT_ID!;
+
+const backendApiClient = new BackendApiClient(backendApiUrl, apiSidecarKey);
 
 const app = new Hono()
   .use("*", bearerAuth({ token }))
@@ -24,20 +46,41 @@ const app = new Hono()
     zValidator("json", updateBuildStatusSchema),
     async (c) => {
       const { status, message } = c.req.valid("json");
-      console.log("Build status updated:", status, message);
-      // TODO: call backend api to update the build status
 
-      // here we exit the sidecar process because if the build is successful or failed, we want to stop the sidecar process to kill the container instances created by azure container apps
-      setTimeout(() => {
-        if (status === "SUCCESS") {
-          process.exit(0);
-        } else {
-          process.exit(1);
-        }
-      }, 3000);
+      await backendApiClient.updateBuildStatus({
+        status,
+        message,
+        deploymentId,
+        projectId,
+      });
+      console.log("Backend API successfully updated with build status.");
       return c.json({ ok: true });
     },
-  );
+  )
+  .post("/metadata", zValidator("json", metadataSchema), async (c) => {
+    const metadata = c.req.valid("json");
+    await backendApiClient.updateMetadata({ ...metadata, deploymentId });
+    console.log("Backend API successfully updated with metadata.");
+    return c.json({ ok: true });
+  })
+  .post("/exit", async (c) => {
+    // this endpoint is used to exit the sidecar after finishing the build process so that the azure container apps jobs can be terminated
+    setTimeout(() => {
+      process.exit(0);
+    }, 3000);
+    return c.json({ ok: true });
+  })
+  .onError((err, c) => {
+    console.error(err);
+    return c.json(
+      {
+        ok: false,
+        message: "An error occurred",
+        error: err.message,
+      },
+      500,
+    );
+  });
 
 serve(
   {

@@ -5,7 +5,7 @@ import fs from "fs/promises";
 import { createReadStream } from "fs";
 import mime from "mime-types";
 import path from "path";
-import { latestCommitObjectId, projectSlug } from "./index.js";
+import { gitCommitSha, projectId } from "./index.js";
 
 const accountName = "deplit";
 
@@ -14,15 +14,20 @@ const blobServiceClient = new BlobServiceClient(
   new DefaultAzureCredential(),
 );
 
+/**
+ * Ensures that a blob storage container for the current project exists, creating it if necessary.
+ *
+ * @returns The {@link ContainerClient} for the project's container.
+ */
 async function createContainerIfNotExists() {
-  const containerClient = blobServiceClient.getContainerClient(projectSlug);
+  const containerClient = blobServiceClient.getContainerClient(projectId);
   const exists = await containerClient.exists();
   if (!exists) {
-    logger.local(`Container ${projectSlug} does not exist, creating...`);
+    logger.local(`Container ${projectId} does not exist, creating...`);
     await containerClient.create({
       access: "blob",
     });
-    logger.local(`Container ${projectSlug} created.`);
+    logger.local(`Container ${projectId} created.`);
   }
   return containerClient;
 }
@@ -34,6 +39,16 @@ type UploadDirRecursivelyArgs = {
 
 let globalContainerClient: ContainerClient;
 
+/**
+ * Recursively uploads all files from a local directory to an Azure Blob Storage container, organizing them under a path prefixed by the current Git commit SHA.
+ *
+ * Skips execution if running in a development environment.
+ *
+ * @param localCurrentDirPath - The path to the directory whose contents should be uploaded.
+ * @param localBaseDirPath - The root directory used to compute relative paths for blob storage organization. Defaults to {@link localCurrentDirPath}.
+ *
+ * @throws {Error} If {@link gitCommitSha} is not defined when attempting to upload a file.
+ */
 export async function uploadDirRecursively({
   localCurrentDirPath,
   localBaseDirPath = localCurrentDirPath,
@@ -56,11 +71,11 @@ export async function uploadDirRecursively({
         localCurrentDirPath: fullPath,
       });
     } else if (item.isFile()) {
-      if (!latestCommitObjectId) {
-        throw new Error("latestCommitObjectId is not defined");
+      if (!gitCommitSha) {
+        throw new Error("gitCommitSha is not defined");
       }
       const relativeFilePath = path.relative(localBaseDirPath, fullPath);
-      const blobFilePath = path.join(latestCommitObjectId, relativeFilePath);
+      const blobFilePath = path.join(gitCommitSha, relativeFilePath);
       await uploadFile({
         containerClient,
         localFilePath: fullPath,

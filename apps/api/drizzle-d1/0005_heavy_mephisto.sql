@@ -1,0 +1,1 @@
+ALTER TABLE `projects` ADD `env_vars` text;
