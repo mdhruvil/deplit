@@ -10,8 +10,9 @@ export const projectInsertSchema = createInsertSchema(projects).omit({
 export const projectUpdateSchema = projectInsertSchema
   .omit({
     slug: true,
-    id: true,
     githubUrl: true,
+    fullName: true,
+    id: true,
   })
   .partial();
 export type ProjectInsert = z.infer<typeof projectInsertSchema>;
