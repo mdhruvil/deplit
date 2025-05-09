@@ -22,16 +22,16 @@ export class Sidecar {
     if (!response.ok) {
       const data = await response.text().catch(() => {
         throw new Error(
-          `[BUILDER-->SIDECAR] Request failed: ${response.status} ${response.statusText}`,
+          `[BUILDER-->SIDECAR] Request failed: ${path} ${response.status} ${response.statusText}`,
         );
       });
       if (data) {
         throw new Error(
-          `[BUILDER-->SIDECAR] Request Failed: ${response.status} ${data}`,
+          `[BUILDER-->SIDECAR] Request Failed: ${path} ${response.status} ${data}`,
         );
       }
       throw new Error(
-        `[BUILDER-->SIDECAR] Request failed: ${response.status} ${response.statusText}`,
+        `[BUILDER-->SIDECAR] Request failed: ${path} ${response.status} ${response.statusText}`,
       );
     }
     return response.json();
@@ -62,9 +62,6 @@ export class Sidecar {
         "Content-Type": "application/json",
       },
     });
-    if (!response.ok) {
-      throw new Error(`[BUILDER-->SIDECAR] Failed to update metadata.`);
-    }
     return response;
   }
 
@@ -75,9 +72,6 @@ export class Sidecar {
         "Content-Type": "application/json",
       },
     });
-    if (!response.ok) {
-      throw new Error(`[BUILDER-->SIDECAR] Failed to exit sidecar.`);
-    }
     return response;
   }
 }

@@ -84,7 +84,7 @@ export type RouteMetadata = {
 /**
  * @param routes - @type { Record<string, string> } - A record of routes and their corresponding file paths.
  */
-export async function prepateMetadataForRoutes(
+export async function prepareMetadataForRoutes(
   routes: Record<string, string>,
   baseDir: string,
 ): Promise<RouteMetadata[]> {

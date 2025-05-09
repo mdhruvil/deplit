@@ -6,7 +6,7 @@ import {
   runVercelBuild,
 } from "./build.js";
 import { cloneRepo } from "./git.js";
-import { mapUrlToFilePath, prepateMetadataForRoutes } from "./postprocess.js";
+import { mapUrlToFilePath, prepareMetadataForRoutes } from "./postprocess.js";
 import { logger } from "./utils/loggers.js";
 import { uploadDirRecursively } from "./upload.js";
 import { Sidecar } from "./utils/sidecar.js";
@@ -110,13 +110,13 @@ async function main() {
 
   logger.info("Assigning domain...");
   const { htmlRoutes, assetsRoutes } = await mapUrlToFilePath(outDir);
-  const htmlRoutesMetadata = await prepateMetadataForRoutes(htmlRoutes, outDir);
-  const assetsRoutesMetadata = await prepateMetadataForRoutes(
+  const htmlRoutesMetadata = await prepareMetadataForRoutes(htmlRoutes, outDir);
+  const assetsRoutesMetadata = await prepareMetadataForRoutes(
     assetsRoutes,
     outDir,
   );
 
-  sidecar.updateMetadata({
+  await sidecar.updateMetadata({
     htmlRoutes: htmlRoutesMetadata,
     assetsRoutes: assetsRoutesMetadata,
   });
