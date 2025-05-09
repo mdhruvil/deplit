@@ -2,6 +2,12 @@ import { EmitterWebhookEvent } from "@octokit/webhooks";
 import { DBDeployments } from "../db/queries/deployments";
 import { DBProjects } from "../db/queries/projects";
 
+/**
+ * Extracts the branch name from a Git ref string if it represents a branch.
+ *
+ * @param ref - The Git ref string to parse.
+ * @returns The branch name if {@link ref} starts with "refs/heads/", or null otherwise.
+ */
 function getBranchNameFromRef(ref: string) {
   if (typeof ref !== "string") return null;
 
@@ -13,6 +19,13 @@ function getBranchNameFromRef(ref: string) {
   return null; // Not a branch ref
 }
 
+/**
+ * Handles a GitHub push webhook event by scheduling deployments for all projects linked to the pushed repository.
+ *
+ * For each linked project, creates a deployment record based on the pushed branch and commit details. Deployments are marked as "PRODUCTION" if the push is to the repository's default branch, otherwise as "PREVIEW".
+ *
+ * @param event - The GitHub push event to process.
+ */
 export async function handleGithubPushEvent(
   event: EmitterWebhookEvent<"push">,
 ) {

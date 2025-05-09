@@ -1,6 +1,12 @@
 import { env } from "cloudflare:workers";
 import { App, Octokit } from "octokit";
 
+/**
+ * Retrieves all GitHub repositories accessible to the authenticated user via their GitHub App installations.
+ *
+ * @param accessToken - The GitHub user access token used for authentication.
+ * @returns An array of repository objects, each containing selected metadata such as ID, name, owner details, visibility, URLs, description, timestamps, and default branch.
+ */
 export async function getCurrentUserRepos(accessToken: string) {
   const octokit = new Octokit({ auth: accessToken });
 

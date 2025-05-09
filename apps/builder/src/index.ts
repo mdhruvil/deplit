@@ -23,6 +23,13 @@ const logFileDest = process.env.DEPLIT_LOG_FILE_DEST!;
 const sidecarPort = process.env.DEPLIT_SIDECAR_PORT!;
 const sidecarToken = process.env.DEPLIT_INTERNAL_SIDECAR_TOKEN!;
 
+/**
+ * Removes the specified directory and recreates it as an empty directory.
+ *
+ * Logs a warning if the directory cannot be cleaned or recreated.
+ *
+ * @param dest - The path to the directory to clean and recreate.
+ */
 async function cleanDest(dest: string) {
   try {
     await fs.rm(dest, { recursive: true, force: true });
@@ -34,6 +41,11 @@ async function cleanDest(dest: string) {
 
 const sidecar = new Sidecar(sidecarPort, sidecarToken);
 
+/**
+ * Orchestrates the end-to-end process of cloning a Git repository, building it with Vercel, deploying the output to Azure Blob Storage, and updating deployment metadata via a sidecar service.
+ *
+ * @throws {Error} If any required environment variable is missing, or if cloning, framework detection, configuration, build, file copying, uploading, or metadata preparation fails.
+ */
 async function main() {
   const missingEnvVars = [];
   // TODO: should we use zod here?

@@ -29,12 +29,11 @@ function getRoute(relativePath: string): string {
 }
 
 /**
- * Recursively reads a directory and returns an object mapping URL routes to file paths
- * relative to the base directory.
+ * Recursively scans a directory tree and maps URL routes to relative file paths for HTML and asset files.
  *
- * @param currentDir - The current directory to scan.
- * @param baseDir - The base directory from which relative paths are computed (defaults to currentDir).
- * @returns A promise resolving to an object where keys are URL routes and values are relative file paths.
+ * @param currentDir - Directory to begin scanning.
+ * @param baseDir - Directory from which relative paths are calculated. Defaults to {@link currentDir}.
+ * @returns A promise resolving to an object with `htmlRoutes` and `assetsRoutes`, each mapping URL routes to relative file paths.
  */
 export async function mapUrlToFilePath(
   currentDir: string,
@@ -82,7 +81,13 @@ export type RouteMetadata = {
 };
 
 /**
- * @param routes - @type { Record<string, string> } - A record of routes and their corresponding file paths.
+ * Generates metadata for each route, including file path and size.
+ *
+ * For each route-file pair, retrieves the file size and returns an array of metadata objects.
+ *
+ * @param routes - Mapping of route strings to relative file paths.
+ * @param baseDir - Base directory used to resolve file paths.
+ * @returns A promise that resolves to an array of {@link RouteMetadata} objects for each route.
  */
 export async function prepareMetadataForRoutes(
   routes: Record<string, string>,
