@@ -10,3 +10,14 @@ export const ingestLogsSchema = z.object({
   message: z.string(),
   timestamp: z.coerce.date(),
 });
+
+export const routeMetadataSchema = z.object({
+  route: z.string(),
+  path: z.string(),
+  size: z.number(),
+});
+
+export const metadataSchema = z.object({
+  htmlRoutes: z.array(routeMetadataSchema),
+  assetsRoutes: z.array(routeMetadataSchema),
+});

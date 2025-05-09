@@ -74,3 +74,31 @@ export async function mapUrlToFilePath(
 
   return { htmlRoutes, assetsRoutes };
 }
+
+export type RouteMetadata = {
+  route: string;
+  path: string;
+  size: number;
+};
+
+/**
+ * @param routes - @type { Record<string, string> } - A record of routes and their corresponding file paths.
+ */
+export async function prepateMetadataForRoutes(
+  routes: Record<string, string>,
+  baseDir: string,
+): Promise<RouteMetadata[]> {
+  const promises = Object.entries(routes).map(async ([route, filePath]) => {
+    const fullPath = path.join(baseDir, filePath);
+    const stats = await fs.stat(fullPath);
+    const size = stats.size;
+    return {
+      route,
+      path: filePath,
+      size,
+    };
+  });
+
+  const metadata = await Promise.all(promises);
+  return metadata;
+}

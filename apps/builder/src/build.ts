@@ -47,7 +47,7 @@ export function runVercelBuild(dest: string): Promise<void> {
       // vercel cli will be globally installed in the container
       "vercel",
       ["build", "--cwd", dest, "-A", projectJsonPath],
-      { shell: true },
+      { shell: true, env: { PATH: process.env.PATH } },
     );
 
     buildProcess.stdout.on("data", (data: Buffer) => {

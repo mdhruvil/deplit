@@ -5,8 +5,8 @@ import {
   detectFramework,
   runVercelBuild,
 } from "./build.js";
-import { cloneRepo, getLatestCommitObjectId } from "./git.js";
-import { mapUrlToFilePath } from "./postprocess.js";
+import { cloneRepo } from "./git.js";
+import { mapUrlToFilePath, prepateMetadataForRoutes } from "./postprocess.js";
 import { logger } from "./utils/loggers.js";
 import { uploadDirRecursively } from "./upload.js";
 import { Sidecar } from "./utils/sidecar.js";
@@ -15,12 +15,13 @@ const cloneDest = process.env.DEPLIT_WORK_DIR!;
 const outDir = process.env.DEPLIT_OUTPUT_DIR!;
 const gitUrl = process.env.DEPLIT_REPO_URL!;
 const branch = process.env.DEPLIT_BRANCH!;
-export const projectSlug = process.env.DEPLIT_PROJECT_SLUG!;
+const deploymentId = process.env.DEPLIT_DEPLOYMENT_ID!;
+export const gitCommitSha = process.env.DEPLIT_GIT_COMMIT_SHA!;
+export const projectId = process.env.DEPLIT_PROJECT_ID!;
+
 const logFileDest = process.env.DEPLIT_LOG_FILE_DEST!;
-
-export let latestCommitObjectId: string | undefined;
-
-const name: any = "";
+const sidecarPort = process.env.DEPLIT_SIDECAR_PORT!;
+const sidecarToken = process.env.DEPLIT_INTERNAL_SIDECAR_TOKEN!;
 
 async function cleanDest(dest: string) {
   try {
@@ -31,6 +32,8 @@ async function cleanDest(dest: string) {
   }
 }
 
+const sidecar = new Sidecar(sidecarPort, sidecarToken);
+
 async function main() {
   const missingEnvVars = [];
   // TODO: should we use zod here?
@@ -38,10 +41,12 @@ async function main() {
   if (!outDir) missingEnvVars.push("DEPLIT_OUTPUT_DIR");
   if (!gitUrl) missingEnvVars.push("DEPLIT_REPO_URL");
   if (!branch) missingEnvVars.push("DEPLIT_BRANCH");
-  if (!projectSlug) missingEnvVars.push("DEPLIT_PROJECT_SLUG");
+  if (!gitCommitSha) missingEnvVars.push("DEPLIT_GIT_COMMIT_SHA");
+  if (!projectId) missingEnvVars.push("DEPLIT_PROJECT_ID");
+  if (!deploymentId) missingEnvVars.push("DEPLIT_DEPLOYMENT_ID");
   if (!logFileDest) missingEnvVars.push("DEPLIT_LOG_FILE_DEST");
-  if (!process.env.DEPLIT_INTERNAL_SIDECAR_TOKEN)
-    missingEnvVars.push("DEPLIT_INTERNAL_SIDECAR_TOKEN");
+  if (!sidecarPort) missingEnvVars.push("DEPLIT_SIDECAR_PORT");
+  if (!sidecarToken) missingEnvVars.push("DEPLIT_INTERNAL_SIDECAR_TOKEN");
   if (missingEnvVars.length > 0) {
     throw new Error(
       `Missing environment variable(s): ${missingEnvVars.join(", ")}`,
@@ -52,19 +57,15 @@ async function main() {
   await cleanDest(outDir);
 
   logger.info(`Cloning ${gitUrl} (Branch: ${branch})`);
-  await cloneRepo({ url: gitUrl, dest: cloneDest, ref: branch }).catch(
-    (err) => {
-      throw new Error("Failed to clone repo.", { cause: err });
-    },
-  );
-  logger.info("Cloning completed.");
-
-  latestCommitObjectId = await getLatestCommitObjectId({
+  await cloneRepo({
+    url: gitUrl,
     dest: cloneDest,
     ref: branch,
+    commitSha: gitCommitSha,
   }).catch((err) => {
-    throw new Error("Failed to get latest commit object id.", { cause: err });
+    throw new Error("Failed to clone repo.", { cause: err });
   });
+  logger.info("Cloning completed.");
 
   const framework = await detectFramework(cloneDest);
   if (!framework) {
@@ -80,6 +81,7 @@ async function main() {
   });
   logger.info("Vercel config created.");
 
+  // TODO: support env vars
   logger.info("Running: vercel build");
   await runVercelBuild(cloneDest).catch((err) => {
     throw new Error("Vercel build failed.", { cause: err });
@@ -97,13 +99,7 @@ async function main() {
       throw new Error("Failed to copy vercel output.", { cause: err });
     });
 
-  logger.info(`Postprocessing vercel output from ${outDir}`);
-  const { htmlRoutes, assetsRoutes } = await mapUrlToFilePath(outDir);
-
-  console.table(htmlRoutes);
-  console.table(assetsRoutes);
-
-  logger.local("Uploading files to Azure Blob Storage...");
+  logger.info("Deploying site...");
   await uploadDirRecursively({
     localCurrentDirPath: outDir,
   }).catch((err) => {
@@ -111,23 +107,25 @@ async function main() {
       cause: err,
     });
   });
+
+  logger.info("Assigning domain...");
+  const { htmlRoutes, assetsRoutes } = await mapUrlToFilePath(outDir);
+  const htmlRoutesMetadata = await prepateMetadataForRoutes(htmlRoutes, outDir);
+  const assetsRoutesMetadata = await prepateMetadataForRoutes(
+    assetsRoutes,
+    outDir,
+  );
+
+  sidecar.updateMetadata({
+    htmlRoutes: htmlRoutesMetadata,
+    assetsRoutes: assetsRoutesMetadata,
+  });
 }
-
-const sidecarPort = process.env.DEPLIT_SIDECAR_PORT;
-const sidecarToken = process.env.DEPLIT_INTERNAL_SIDECAR_TOKEN;
-
-if (!sidecarPort || !sidecarToken) {
-  logger.error("Missing environment variable(s). Check the .env.example file.");
-  process.exit(1);
-}
-
-const sidecar = new Sidecar(sidecarPort, sidecarToken);
 
 main()
   .then(async () => {
     logger.info("Build completed successfully.");
     await sidecar.updateBuildStatus("SUCCESS", "Build completed successfully.");
-    process.exit(0);
   })
   .catch(async (err) => {
     logger.error("Error: ", err);
@@ -135,5 +133,9 @@ main()
       "ERROR",
       err.message ?? "Build failed for some unknown reason.",
     );
-    process.exit(1);
+  })
+  .finally(async () => {
+    logger.info("Cleaning up...");
+    await sidecar.exitSidecar();
+    process.exit(0);
   });

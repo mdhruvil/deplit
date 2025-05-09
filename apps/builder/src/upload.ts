@@ -5,7 +5,7 @@ import fs from "fs/promises";
 import { createReadStream } from "fs";
 import mime from "mime-types";
 import path from "path";
-import { latestCommitObjectId, projectSlug } from "./index.js";
+import { gitCommitSha, projectId } from "./index.js";
 
 const accountName = "deplit";
 
@@ -15,14 +15,14 @@ const blobServiceClient = new BlobServiceClient(
 );
 
 async function createContainerIfNotExists() {
-  const containerClient = blobServiceClient.getContainerClient(projectSlug);
+  const containerClient = blobServiceClient.getContainerClient(projectId);
   const exists = await containerClient.exists();
   if (!exists) {
-    logger.local(`Container ${projectSlug} does not exist, creating...`);
+    logger.local(`Container ${projectId} does not exist, creating...`);
     await containerClient.create({
       access: "blob",
     });
-    logger.local(`Container ${projectSlug} created.`);
+    logger.local(`Container ${projectId} created.`);
   }
   return containerClient;
 }
@@ -56,11 +56,11 @@ export async function uploadDirRecursively({
         localCurrentDirPath: fullPath,
       });
     } else if (item.isFile()) {
-      if (!latestCommitObjectId) {
-        throw new Error("latestCommitObjectId is not defined");
+      if (!gitCommitSha) {
+        throw new Error("gitCommitSha is not defined");
       }
       const relativeFilePath = path.relative(localBaseDirPath, fullPath);
-      const blobFilePath = path.join(latestCommitObjectId, relativeFilePath);
+      const blobFilePath = path.join(gitCommitSha, relativeFilePath);
       await uploadFile({
         containerClient,
         localFilePath: fullPath,

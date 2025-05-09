@@ -6,34 +6,40 @@ type CloneRepoArgs = {
   url: string;
   dest: string;
   ref?: string;
+  commitSha: string;
 };
-export async function cloneRepo({ url, dest, ref }: CloneRepoArgs) {
-  await git.clone({
+
+export async function cloneRepo({ url, dest, ref, commitSha }: CloneRepoArgs) {
+  console.log("Cloning repo", { url, dest, ref, commitSha });
+
+  await git.init({
+    fs,
+    dir: dest,
+  });
+
+  await git.addRemote({
+    fs,
+    dir: dest,
+    remote: "origin",
+    url,
+  });
+
+  await git.fetch({
     fs,
     http,
     dir: dest,
+    remote: "origin",
     url,
-    depth: 1,
     ref,
-  });
-}
 
-type GetLatestCommitObjectIdArgs = {
-  dest: string;
-  ref: string;
-};
-export async function getLatestCommitObjectId({
-  ref,
-  dest,
-}: GetLatestCommitObjectIdArgs) {
-  const commit = await git.log({
+    onMessage: (msg) => {
+      console.log("Git fetch message:", msg);
+    },
+  });
+
+  await git.checkout({
     fs,
     dir: dest,
-    depth: 1,
-    ref,
+    ref: commitSha,
   });
-  if (commit.length === 0 || !commit[0]?.oid) {
-    throw new Error("No commits found");
-  }
-  return commit[0].oid;
 }

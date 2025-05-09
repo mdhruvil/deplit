@@ -1,3 +1,5 @@
+import { RouteMetadata } from "../postprocess.js";
+
 export class Sidecar {
   constructor(
     private port: string,
@@ -45,6 +47,36 @@ export class Sidecar {
     });
     if (!response.ok) {
       throw new Error(`[BUILDER-->SIDECAR] Failed to update build status.`);
+    }
+    return response;
+  }
+
+  async updateMetadata(data: {
+    htmlRoutes: RouteMetadata[];
+    assetsRoutes: RouteMetadata[];
+  }) {
+    const response = await this.$fetch("/metadata", {
+      method: "POST",
+      body: JSON.stringify(data),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    if (!response.ok) {
+      throw new Error(`[BUILDER-->SIDECAR] Failed to update metadata.`);
+    }
+    return response;
+  }
+
+  async exitSidecar() {
+    const response = await this.$fetch("/exit", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    if (!response.ok) {
+      throw new Error(`[BUILDER-->SIDECAR] Failed to exit sidecar.`);
     }
     return response;
   }
