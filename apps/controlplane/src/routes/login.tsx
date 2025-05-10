@@ -2,7 +2,7 @@ import { QUERY_KEYS } from "@/api/query-keys";
 import { GithubIcon } from "@/components/icons";
 import { Button } from "@/components/ui/button";
 import { authClient } from "@/lib/auth-client";
-import { queryClient } from "@/main";
+import { queryClient } from "@/router";
 import { useMutation } from "@tanstack/react-query";
 import { createFileRoute, redirect } from "@tanstack/react-router";
 
