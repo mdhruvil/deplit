@@ -1,4 +1,4 @@
-import { trpc } from "@/api/client";
+import { trpc } from "@/router";
 import { useQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 

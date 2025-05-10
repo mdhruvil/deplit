@@ -20,6 +20,9 @@ export class DBProjects {
       where: (project, { eq }) => eq(project.id, id),
       with: {
         creator: true,
+        deployments: {
+          orderBy: (deployments, { desc }) => desc(deployments.createdAt),
+        },
       },
     });
     return result;
@@ -42,6 +45,12 @@ export class DBProjects {
   static async findAll(userId: string) {
     const result = await db.query.projects.findMany({
       where: (project, { eq }) => eq(project.creatorId, userId),
+      with: {
+        deployments: {
+          limit: 1,
+          orderBy: (deployments, { desc }) => desc(deployments.createdAt),
+        },
+      },
     });
     return result;
   }

@@ -1,11 +1,11 @@
 import type { AppRouter } from "@deplit/api";
 import { createTRPCClient, httpBatchLink } from "@trpc/client";
-import { createTRPCOptionsProxy } from "@trpc/tanstack-react-query";
-import { queryClient } from "@/main";
+import SuperJSON from "superjson";
 
-const trpcClient = createTRPCClient<AppRouter>({
+export const trpcClient = createTRPCClient<AppRouter>({
   links: [
     httpBatchLink({
+      transformer: SuperJSON,
       url: `${import.meta.env.VITE_BACKEND_URL}/api/rpc`,
       fetch: (input, init) => {
         return fetch(input, {
@@ -15,9 +15,4 @@ const trpcClient = createTRPCClient<AppRouter>({
       },
     }),
   ],
-});
-
-export const trpc = createTRPCOptionsProxy<AppRouter>({
-  client: trpcClient,
-  queryClient,
 });

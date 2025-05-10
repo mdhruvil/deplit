@@ -1,7 +1,6 @@
 import { getSessionQueryOptions } from "@/api/get-session";
 import { buttonVariants } from "@/components/ui/button";
 import { UserProfileButton } from "@/components/user-profile-button";
-import { queryClient } from "@/main";
 import { useQuery } from "@tanstack/react-query";
 import {
   createFileRoute,
@@ -11,7 +10,8 @@ import {
 } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/_authed")({
-  loader: () => queryClient.ensureQueryData(getSessionQueryOptions()),
+  loader: ({ context: { queryClient } }) =>
+    queryClient.ensureQueryData(getSessionQueryOptions()),
   onError() {
     throw redirect({
       to: "/login",
@@ -46,7 +46,7 @@ function RouteComponent() {
 
   return (
     <div className="bg-background min-h-screen">
-      <header className="border-border border-b">
+      <header className="border-border border-b shadow">
         <div className="mx-auto max-w-5xl px-6 py-3 lg:max-w-6xl">
           <div className="flex items-center justify-between">
             <Link to="/dashboard" className="flex items-center gap-3">

@@ -1,10 +1,11 @@
 import { NotFound } from "@/components/not-found";
-import { Outlet, createRootRoute } from "@tanstack/react-router";
+import { Context } from "@/router";
+import { Outlet, createRootRouteWithContext } from "@tanstack/react-router";
 import { TanStackRouterDevtools } from "@tanstack/router-devtools";
 
-export const Route = createRootRoute({
+export const Route = createRootRouteWithContext<Context>()({
   component: RootComponent,
-  notFoundComponent: ({ data }) => {
+  notFoundComponent: () => {
     return <NotFound />;
   },
 });
