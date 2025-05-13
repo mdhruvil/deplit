@@ -18,6 +18,7 @@ import { Route as IndexImport } from './routes/index'
 import { Route as AuthedProfileImport } from './routes/_authed/profile'
 import { Route as AuthedDashboardIndexImport } from './routes/_authed/dashboard/index'
 import { Route as AuthedDashboardNewImport } from './routes/_authed/dashboard/new'
+import { Route as AuthedDashboardDeployImport } from './routes/_authed/dashboard/deploy'
 import { Route as AuthedDashboardProjectProjectIdIndexImport } from './routes/_authed/dashboard/project/$projectId/index'
 import { Route as AuthedDashboardProjectProjectIdSettingsImport } from './routes/_authed/dashboard/project/$projectId/settings'
 import { Route as AuthedDashboardProjectProjectIdDeploymentIdImport } from './routes/_authed/dashboard/project/$projectId/$deploymentId'
@@ -62,6 +63,12 @@ const AuthedDashboardIndexRoute = AuthedDashboardIndexImport.update({
 const AuthedDashboardNewRoute = AuthedDashboardNewImport.update({
   id: '/dashboard/new',
   path: '/dashboard/new',
+  getParentRoute: () => AuthedRoute,
+} as any)
+
+const AuthedDashboardDeployRoute = AuthedDashboardDeployImport.update({
+  id: '/dashboard/deploy',
+  path: '/dashboard/deploy',
   getParentRoute: () => AuthedRoute,
 } as any)
 
@@ -125,6 +132,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthedProfileImport
       parentRoute: typeof AuthedImport
     }
+    '/_authed/dashboard/deploy': {
+      id: '/_authed/dashboard/deploy'
+      path: '/dashboard/deploy'
+      fullPath: '/dashboard/deploy'
+      preLoaderRoute: typeof AuthedDashboardDeployImport
+      parentRoute: typeof AuthedImport
+    }
     '/_authed/dashboard/new': {
       id: '/_authed/dashboard/new'
       path: '/dashboard/new'
@@ -167,6 +181,7 @@ declare module '@tanstack/react-router' {
 
 interface AuthedRouteChildren {
   AuthedProfileRoute: typeof AuthedProfileRoute
+  AuthedDashboardDeployRoute: typeof AuthedDashboardDeployRoute
   AuthedDashboardNewRoute: typeof AuthedDashboardNewRoute
   AuthedDashboardIndexRoute: typeof AuthedDashboardIndexRoute
   AuthedDashboardProjectProjectIdDeploymentIdRoute: typeof AuthedDashboardProjectProjectIdDeploymentIdRoute
@@ -176,6 +191,7 @@ interface AuthedRouteChildren {
 
 const AuthedRouteChildren: AuthedRouteChildren = {
   AuthedProfileRoute: AuthedProfileRoute,
+  AuthedDashboardDeployRoute: AuthedDashboardDeployRoute,
   AuthedDashboardNewRoute: AuthedDashboardNewRoute,
   AuthedDashboardIndexRoute: AuthedDashboardIndexRoute,
   AuthedDashboardProjectProjectIdDeploymentIdRoute:
@@ -195,6 +211,7 @@ export interface FileRoutesByFullPath {
   '/about': typeof AboutRoute
   '/login': typeof LoginRoute
   '/profile': typeof AuthedProfileRoute
+  '/dashboard/deploy': typeof AuthedDashboardDeployRoute
   '/dashboard/new': typeof AuthedDashboardNewRoute
   '/dashboard': typeof AuthedDashboardIndexRoute
   '/dashboard/project/$projectId/$deploymentId': typeof AuthedDashboardProjectProjectIdDeploymentIdRoute
@@ -208,6 +225,7 @@ export interface FileRoutesByTo {
   '/about': typeof AboutRoute
   '/login': typeof LoginRoute
   '/profile': typeof AuthedProfileRoute
+  '/dashboard/deploy': typeof AuthedDashboardDeployRoute
   '/dashboard/new': typeof AuthedDashboardNewRoute
   '/dashboard': typeof AuthedDashboardIndexRoute
   '/dashboard/project/$projectId/$deploymentId': typeof AuthedDashboardProjectProjectIdDeploymentIdRoute
@@ -222,6 +240,7 @@ export interface FileRoutesById {
   '/about': typeof AboutRoute
   '/login': typeof LoginRoute
   '/_authed/profile': typeof AuthedProfileRoute
+  '/_authed/dashboard/deploy': typeof AuthedDashboardDeployRoute
   '/_authed/dashboard/new': typeof AuthedDashboardNewRoute
   '/_authed/dashboard/': typeof AuthedDashboardIndexRoute
   '/_authed/dashboard/project/$projectId/$deploymentId': typeof AuthedDashboardProjectProjectIdDeploymentIdRoute
@@ -237,6 +256,7 @@ export interface FileRouteTypes {
     | '/about'
     | '/login'
     | '/profile'
+    | '/dashboard/deploy'
     | '/dashboard/new'
     | '/dashboard'
     | '/dashboard/project/$projectId/$deploymentId'
@@ -249,6 +269,7 @@ export interface FileRouteTypes {
     | '/about'
     | '/login'
     | '/profile'
+    | '/dashboard/deploy'
     | '/dashboard/new'
     | '/dashboard'
     | '/dashboard/project/$projectId/$deploymentId'
@@ -261,6 +282,7 @@ export interface FileRouteTypes {
     | '/about'
     | '/login'
     | '/_authed/profile'
+    | '/_authed/dashboard/deploy'
     | '/_authed/dashboard/new'
     | '/_authed/dashboard/'
     | '/_authed/dashboard/project/$projectId/$deploymentId'
@@ -306,6 +328,7 @@ export const routeTree = rootRoute
       "filePath": "_authed.tsx",
       "children": [
         "/_authed/profile",
+        "/_authed/dashboard/deploy",
         "/_authed/dashboard/new",
         "/_authed/dashboard/",
         "/_authed/dashboard/project/$projectId/$deploymentId",
@@ -321,6 +344,10 @@ export const routeTree = rootRoute
     },
     "/_authed/profile": {
       "filePath": "_authed/profile.tsx",
+      "parent": "/_authed"
+    },
+    "/_authed/dashboard/deploy": {
+      "filePath": "_authed/dashboard/deploy.tsx",
       "parent": "/_authed"
     },
     "/_authed/dashboard/new": {
