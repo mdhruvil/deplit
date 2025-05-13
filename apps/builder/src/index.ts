@@ -81,14 +81,11 @@ async function main() {
   logger.info("Cloning completed.");
 
   const framework = await detectFramework(cloneDest);
-  if (!framework) {
-    throw new Error("Failed to detect framework.", { cause: framework });
-  }
-  logger.info(`Detected framework: ${framework}`);
+  logger.info(`Detected framework: ${framework ?? "unknown"}`);
 
   await createVercelConfig({
     dest: cloneDest,
-    detectedFramework: framework,
+    detectedFramework: framework ?? null,
   }).catch((err) => {
     throw new Error("Failed to create vercel config.", { cause: err });
   });
