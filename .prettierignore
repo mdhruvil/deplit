@@ -1,0 +1,2 @@
+*.gen.ts
+worker-configuration.d.ts
