@@ -38,7 +38,6 @@ export const Route = createFileRoute("/_authed/dashboard/")({
 function DashboardComponent() {
   const { data } = useQuery(trpc.project.getAll.queryOptions());
 
-  console.log(data?.length);
   if (!data || !data.length) {
     return (
       <div className="space-y-4">

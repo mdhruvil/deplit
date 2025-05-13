@@ -8,7 +8,13 @@ import {
 import { trpcClient } from "./api/client";
 import { routeTree } from "./routeTree.gen";
 
-export const queryClient = new QueryClient();
+export const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: 2,
+    },
+  },
+});
 
 export const trpc = createTRPCOptionsProxy<AppRouter>({
   client: trpcClient,
