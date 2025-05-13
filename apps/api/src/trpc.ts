@@ -21,24 +21,21 @@ const t = initTRPC.context<Context>().create({
 
 export const router = t.router;
 export const publicProcedure = t.procedure;
-export const protectedProcedure = t.procedure.use(
-  async function isAuthed(opts) {
-    if (!opts.ctx.user || !opts.ctx.session) {
-      throw new TRPCError({
-        code: "UNAUTHORIZED",
-        message: "You need to be logged in to perform this action.",
-      });
-    }
-
-    await new Promise((resolve) => setTimeout(resolve, 2000));
-    return opts.next({
-      ctx: {
-        session: opts.ctx.session,
-        user: opts.ctx.user,
-      },
+export const protectedProcedure = t.procedure.use(function isAuthed(opts) {
+  if (!opts.ctx.user || !opts.ctx.session) {
+    throw new TRPCError({
+      code: "UNAUTHORIZED",
+      message: "You need to be logged in to perform this action.",
     });
-  },
-);
+  }
+
+  return opts.next({
+    ctx: {
+      session: opts.ctx.session,
+      user: opts.ctx.user,
+    },
+  });
+});
 
 export function createTRPCContext(c: HonoCtx<Env>) {
   return function ({ req, resHeaders, info }: FetchCreateContextFnOptions) {
