@@ -41,10 +41,6 @@ export async function cloneRepo({ url, dest, ref, commitSha }: CloneRepoArgs) {
     remote: "origin",
     url,
     ref,
-
-    onMessage: (msg) => {
-      console.log("Git fetch message:", msg);
-    },
   });
 
   await git.checkout({
