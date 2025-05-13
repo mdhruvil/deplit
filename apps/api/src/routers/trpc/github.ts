@@ -40,9 +40,9 @@ export const githubRouter = router({
         },
       );
 
-      return repos;
+      return repos as Awaited<ReturnType<typeof getCurrentUserRepos>>;
     } catch (error) {
-      console.error("Error in getRepos procedure:", error);
+      console.error("Errors in getRepos procedure:", error);
       throw error instanceof TRPCError
         ? error
         : new TRPCError({

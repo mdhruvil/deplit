@@ -93,13 +93,13 @@ function CreateNewProjectComponent() {
               </a>
             </div>
           ) : null}
-          {filteredRepos.length !== 0 ? (
+          {filteredRepos.length !== 0 && data.length !== 0 ? (
             <div className="space-y-2">
-              <ScrollArea className="h-fit max-h-100 rounded-lg border [&>[data-slot='scroll-area-viewport']>div]:divide-y">
-                {filteredRepos.map((repo) => (
+              <div className="max-h-100 divide-y overflow-auto rounded-lg border">
+                {filteredRepos.slice(0, 3).map((repo) => (
                   <RepoCard key={repo.id} repo={repo} />
                 ))}
-              </ScrollArea>
+              </div>
               <div className="text-muted-foreground w-fit">
                 Don&apos;t see a repository?
                 <a
