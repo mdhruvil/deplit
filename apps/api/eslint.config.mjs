@@ -6,4 +6,9 @@ export default [
   {
     ignores: [".wrangler/**"],
   },
+  {
+    rules: {
+      "@typescript-eslint/no-floating-promises": "error",
+    },
+  },
 ];
