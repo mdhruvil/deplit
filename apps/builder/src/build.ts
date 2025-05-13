@@ -23,7 +23,7 @@ export async function createVercelConfig({
   detectedFramework,
 }: {
   dest: string;
-  detectedFramework: string;
+  detectedFramework: string | null;
 }) {
   const projectJsonContent = {
     projectId: "deplit",
@@ -36,7 +36,10 @@ export async function createVercelConfig({
   const vercelDir = path.join(dest, ".vercel");
   const projectJsonPath = path.join(vercelDir, "project.json");
   await fs.mkdir(vercelDir);
-  await fs.writeFile(projectJsonPath, JSON.stringify(projectJsonContent));
+  await fs.writeFile(
+    projectJsonPath,
+    JSON.stringify(projectJsonContent, null, 2),
+  );
 }
 
 /**
