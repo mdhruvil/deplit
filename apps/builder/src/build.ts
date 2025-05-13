@@ -51,11 +51,19 @@ export function runVercelBuild(dest: string): Promise<void> {
   const vercelDir = path.join(dest, ".vercel");
   const projectJsonPath = path.join(vercelDir, "project.json");
   return new Promise((resolve, reject) => {
+    const vercelBuildOpts = ["--cwd", dest, "-A", projectJsonPath, "--prod"];
+    if (process.env.NODE_ENV === "development") {
+      vercelBuildOpts.push("-d");
+    }
+
     const buildProcess = spawn(
       // vercel cli will be globally installed in the container
       "vercel",
-      ["build", "--cwd", dest, "-A", projectJsonPath],
-      { shell: true, env: { PATH: process.env.PATH } },
+      ["build", ...vercelBuildOpts],
+      {
+        shell: true,
+        env: { PATH: process.env.PATH, VERCEL_TELEMETRY_DISABLED: "1" },
+      },
     );
 
     buildProcess.stdout.on("data", (data: Buffer) => {
