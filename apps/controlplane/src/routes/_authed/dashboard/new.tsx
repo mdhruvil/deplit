@@ -96,7 +96,7 @@ function CreateNewProjectComponent() {
           {filteredRepos.length !== 0 && data.length !== 0 ? (
             <div className="space-y-2">
               <div className="max-h-100 divide-y overflow-auto rounded-lg border">
-                {filteredRepos.slice(0, 3).map((repo) => (
+                {filteredRepos.map((repo) => (
                   <RepoCard key={repo.id} repo={repo} />
                 ))}
               </div>
