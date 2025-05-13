@@ -65,7 +65,7 @@ const columns: ColumnDef<Deployment>[] = [
       const buildStatusMsgMap: Record<typeof buildStatus, string> = {
         IN_QUEUE: "In Queue",
         BUILDING: "Building",
-        SUCCESS: "Success",
+        SUCCESS: "Ready",
         FAILED: "Failed",
       };
 
