@@ -9,7 +9,7 @@ import { PlusIcon } from "lucide-react";
 export const Route = createFileRoute("/_authed/dashboard/")({
   component: DashboardComponent,
   loader: async ({ context: { queryClient, trpc } }) => {
-    await queryClient.ensureQueryData(trpc.project.getAll.queryOptions());
+    queryClient.prefetchQuery(trpc.project.getAll.queryOptions());
   },
   pendingComponent: () => {
     return (
@@ -27,16 +27,34 @@ export const Route = createFileRoute("/_authed/dashboard/")({
     );
   },
   errorComponent: ({ error }) => {
-    return (
-      <div>
-        <Error message={error.message} />
-      </div>
-    );
+    return <Error message={error.message} />;
   },
 });
 
 function DashboardComponent() {
-  const { data } = useQuery(trpc.project.getAll.queryOptions());
+  const { data, isLoading, isError, error } = useQuery(
+    trpc.project.getAll.queryOptions(),
+  );
+
+  if (isLoading) {
+    return (
+      <div className="space-y-4">
+        <div className="flex items-center justify-between">
+          <h3 className="text-foreground text-2xl font-semibold">Projects</h3>
+          <CreateNewProjectButton />
+        </div>
+        <div className="grid grid-cols-1 gap-2 sm:gap-3 md:grid-cols-2 lg:grid-cols-3">
+          {Array.from({ length: 6 }).map((_, i) => (
+            <ProjectCardSkeleton key={i} />
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  if (isError) {
+    return <Error message={error.message} />;
+  }
 
   if (!data || !data.length) {
     return (

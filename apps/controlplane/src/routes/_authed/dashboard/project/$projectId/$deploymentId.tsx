@@ -37,8 +37,8 @@ export const Route = createFileRoute(
   "/_authed/dashboard/project/$projectId/$deploymentId",
 )({
   component: RouteComponent,
-  loader: async ({ context: { queryClient, trpc }, params }) => {
-    await queryClient.ensureQueryData(
+  loader: ({ context: { queryClient, trpc }, params }) => {
+    queryClient.prefetchQuery(
       trpc.deployment.getById.queryOptions({
         deploymentId: params.deploymentId,
         projectId: params.projectId,
@@ -46,11 +46,7 @@ export const Route = createFileRoute(
     );
   },
   errorComponent: ({ error }) => {
-    return (
-      <div>
-        <Error message={error.message} />
-      </div>
-    );
+    return <Error message={error.message} />;
   },
 });
 
@@ -61,7 +57,7 @@ function RouteComponent() {
       deploymentId: d.deploymentId,
     }),
   });
-  const { data } = useQuery(
+  const { data, isLoading, error, isError } = useQuery(
     trpc.deployment.getById.queryOptions({
       deploymentId,
       projectId,
@@ -69,8 +65,12 @@ function RouteComponent() {
   );
 
   //TODO: add proper loading component
-  if (!data) {
+  if (isLoading) {
     return <div>Loading...</div>;
+  }
+
+  if (isError || !data) {
+    return <Error message={error?.message} />;
   }
 
   const htmlRoutes: Array<RouteMetaData> =

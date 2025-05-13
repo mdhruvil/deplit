@@ -51,11 +51,7 @@ export const Route = createFileRoute("/_authed/dashboard/deploy")({
         .join(", ");
     }
 
-    return (
-      <div>
-        <Error message={errorMsg} />
-      </div>
-    );
+    return <Error message={errorMsg} />;
   },
 });
 

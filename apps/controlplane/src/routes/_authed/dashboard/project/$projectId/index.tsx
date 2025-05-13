@@ -10,17 +10,13 @@ import { RefreshCwIcon } from "lucide-react";
 
 export const Route = createFileRoute("/_authed/dashboard/project/$projectId/")({
   component: ProjectComponent,
-  loader: async ({ context: { queryClient, trpc }, params }) => {
-    await queryClient.ensureQueryData(
+  loader: ({ context: { queryClient, trpc }, params }) => {
+    queryClient.prefetchQuery(
       trpc.project.getById.queryOptions({ projectId: params.projectId }),
     );
   },
   errorComponent: ({ error }) => {
-    return (
-      <div>
-        <Error message={error.message} />
-      </div>
-    );
+    return <Error message={error.message} />;
   },
   pendingComponent: () => {
     return <ProjectComponentSkeleton />;
@@ -38,11 +34,7 @@ function ProjectComponent() {
   }
 
   if (isError || !data) {
-    return (
-      <div>
-        <Error message={error?.message} />
-      </div>
-    );
+    return <Error message={error?.message} />;
   }
 
   if (!data.deployments || !data.deployments.length) {
