@@ -1,6 +1,6 @@
 import { EmitterWebhookEvent } from "@octokit/webhooks";
-import { DBDeployments } from "../db/queries/deployments";
 import { DBProjects } from "../db/queries/projects";
+import { createDeploymentAndScheduleIt } from "./schedule-build";
 
 /**
  * Extracts the branch name from a Git ref string if it represents a branch.
@@ -34,13 +34,13 @@ export async function handleGithubPushEvent(
   const projects = await DBProjects.findByFullName(
     payload.repository.full_name,
   );
-  console.log("Projects", projects);
 
   if (!projects || projects.length === 0) {
     console.log("No projects found for this repository");
     return;
   }
 
+  console.log("Projects", projects);
   const pushedBranchName = getBranchNameFromRef(payload.ref);
   if (!pushedBranchName) {
     console.log("Not a branch ref, ignoring");
@@ -60,21 +60,21 @@ export async function handleGithubPushEvent(
   }
 
   const deploymentPromises = projects.map(async (project) => {
-    const deployment = await DBDeployments.create(project.id, {
+    const scheduleStatus = await createDeploymentAndScheduleIt({
+      projectId: project.id,
+      githubUrl: payload.repository.git_url,
       gitCommitHash: lastCommitSha,
       gitRef: pushedBranchName,
       gitCommitMessage: lastCommit.message,
-      gitCommitAuthorName: lastCommit.author.username ?? lastCommit.author.name,
+      gitCommitAuthorName: lastCommit.author.name,
       gitCommitTimestamp: new Date(lastCommit.timestamp),
       alias: isProduction
         ? `${project.slug}.deplit.tech`
         : `${project.slug}-${lastCommitSha.slice(0, 7)}.deplit.tech`,
       target: isProduction ? "PRODUCTION" : "PREVIEW",
-      activeState: isProduction ? "INACTIVE" : "NA",
     });
 
-    // TODO: add the deployment to the queue for building
-    console.log("Scheduled deployment", deployment);
+    console.log("Scheduled deployment", scheduleStatus);
   });
 
   await Promise.all(deploymentPromises);

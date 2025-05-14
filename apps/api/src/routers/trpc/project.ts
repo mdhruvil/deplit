@@ -3,6 +3,9 @@ import { protectedProcedure, router } from "../../trpc";
 import { DBProjects } from "../../db/queries/projects";
 import { TRPCError } from "@trpc/server";
 import { projectInsertSchema, projectUpdateSchema } from "../../db/validators";
+import { getAccountFromUserId } from "../../lib/auth";
+import { getLastCommitForRepo } from "../../lib/github";
+import { createDeploymentAndScheduleIt } from "../../lib/schedule-build";
 
 export const projectRouter = router({
   getAll: protectedProcedure.query(async ({ ctx }) => {
@@ -24,8 +27,29 @@ export const projectRouter = router({
     }),
 
   create: protectedProcedure
-    .input(projectInsertSchema)
+    .input(projectInsertSchema.extend({ defaultBranch: z.string() }))
     .mutation(async ({ ctx, input }) => {
+      const account = await getAccountFromUserId(ctx.user.id);
+      if (!account) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Account not found",
+        });
+      }
+      if (!account.accessToken) {
+        throw new TRPCError({
+          code: "UNAUTHORIZED",
+          message: "No access token found",
+        });
+      }
+
+      const lastCommit = await getLastCommitForRepo({
+        owner: input.fullName.split("/")[0] ?? "",
+        repo: input.fullName.split("/")[1] ?? "",
+        ref: input.defaultBranch,
+        accessToken: account.accessToken,
+      });
+
       const [result] = await DBProjects.create(ctx.user.id, input).catch(
         (error) => {
           if (
@@ -41,8 +65,21 @@ export const projectRouter = router({
         },
       );
 
-      // TODO: schedule a deployment with the default branch and latest commit
-
+      const deploymentResult = await createDeploymentAndScheduleIt({
+        projectId: result.id,
+        githubUrl: `https://github.com/${input.fullName}`,
+        gitCommitHash: lastCommit.sha,
+        gitRef: input.defaultBranch,
+        gitCommitMessage: lastCommit.commit.message,
+        gitCommitAuthorName:
+          lastCommit.commit.author?.name ?? lastCommit.author?.login ?? "",
+        alias: `${result.slug}.deplit.tech`,
+        target: "PRODUCTION",
+        gitCommitTimestamp: new Date(
+          lastCommit.commit.author?.date ?? Date.now(),
+        ),
+      });
+      console.log("Deployment scheduled:", deploymentResult);
       return result;
     }),
 
