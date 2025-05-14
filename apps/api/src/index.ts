@@ -10,7 +10,6 @@ import { sidecarRouter } from "./routers/sidecar";
 import { appRouter } from "./routers/trpc/app-router";
 import { createTRPCContext } from "./trpc";
 import { notFound } from "./utils";
-import { getLastCommitForRepo } from "./lib/github";
 
 export type Env = {
   Variables: {

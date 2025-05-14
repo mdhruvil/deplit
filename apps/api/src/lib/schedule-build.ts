@@ -1,4 +1,3 @@
-import { QueueClient } from "@azure/storage-queue";
 import { DBDeployments } from "../db/queries/deployments";
 import { env } from "cloudflare:workers";
 
@@ -29,11 +28,6 @@ export async function createDeploymentAndScheduleIt(args: {
     throw new Error("Failed to create deployment");
   }
 
-  const queueClient = new QueueClient(
-    env.AZURE_STORAGE_CONNECTION_STRING,
-    "deplit-deployment-queue",
-  );
-
   const message = {
     githubUrl: args.githubUrl,
     branch: args.gitRef,
@@ -45,6 +39,27 @@ export async function createDeploymentAndScheduleIt(args: {
   const jsonString = JSON.stringify(message);
   const base64Message = Buffer.from(jsonString).toString("base64");
 
-  const queueResponse = await queueClient.sendMessage(base64Message);
-  return queueResponse;
+  const xmlBody = `<QueueMessage><MessageText>${base64Message}</MessageText></QueueMessage>`;
+
+  const response = await fetch(env.AZURE_STORAGE_QUEUE_SAS_URL, {
+    method: "POST",
+    headers: {
+      "x-ms-date": new Date().toUTCString(),
+      "x-ms-version": "2020-10-02",
+      "Content-Type": "application/xml",
+      "Content-Length": String(xmlBody.length),
+    },
+    body: xmlBody,
+  });
+
+  if (!response.ok) {
+    console.log(await response.text());
+    throw new Error(
+      `Failed to schedule deployment: ${response.status} ${response.statusText}`,
+    );
+  }
+
+  const responseBody = await response.text();
+  console.log("Response from Azure:", responseBody);
+  return true;
 }
