@@ -58,7 +58,7 @@ const app = new Hono()
         const htmlRoutes: Record<string, string> = {};
         if (deployment.metadata?.htmlRoutes) {
           for (const route of deployment.metadata?.htmlRoutes) {
-            htmlRoutes[route.path] = route.route;
+            htmlRoutes[route.route] = route.path;
           }
         }
 
