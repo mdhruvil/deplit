@@ -62,7 +62,7 @@ export async function handleGithubPushEvent(
   const deploymentPromises = projects.map(async (project) => {
     const scheduleStatus = await createDeploymentAndScheduleIt({
       projectId: project.id,
-      githubUrl: payload.repository.git_url,
+      githubUrl: payload.repository.clone_url,
       gitCommitHash: lastCommitSha,
       gitRef: pushedBranchName,
       gitCommitMessage: lastCommit.message,

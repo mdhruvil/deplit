@@ -72,7 +72,7 @@ export const projectRouter = router({
         gitRef: input.defaultBranch,
         gitCommitMessage: lastCommit.commit.message,
         gitCommitAuthorName:
-          lastCommit.commit.author?.name ?? lastCommit.author?.login ?? "",
+          lastCommit.author?.name ?? lastCommit.author?.name ?? "",
         alias: `${result.slug}.deplit.tech`,
         target: "PRODUCTION",
         gitCommitTimestamp: new Date(
