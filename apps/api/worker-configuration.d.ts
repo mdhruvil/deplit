@@ -10,6 +10,9 @@ declare namespace Cloudflare {
 		CLOUDFLARE_EMAIL: string;
 		CLOUDFLARE_API_KEY: string;
 		CLOUDFLARE_ZONE_ID: string;
+		CLOUDFLARE_EMAIL: string;
+		CLOUDFLARE_API_KEY: string;
+		CLOUDFLARE_ZONE_ID: string;
 		BETTER_AUTH_SECRET: string;
 		BETTER_AUTH_URL: string;
 		GITHUB_CLIENT_ID: string;
