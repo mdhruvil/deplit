@@ -68,6 +68,8 @@ async function main() {
   await cleanDest(cloneDest);
   await cleanDest(outDir);
 
+  await sidecar.updateBuildStatus("BUILDING", "Build started.");
+
   const buildStartTime = performance.now();
   logger.info(`Cloning ${gitUrl} (Branch: ${branch})`);
   await cloneRepo({

@@ -8,7 +8,7 @@ import { notFound } from "../utils";
 import { invalidateCacheByTag } from "../lib/postbuild";
 
 const updateBuildStatusSchema = z.object({
-  status: z.enum(["SUCCESS", "ERROR"]),
+  status: z.enum(["SUCCESS", "ERROR", "BUILDING"]),
   message: z.string(),
   deploymentId: z.string(),
   projectId: z.string(),
@@ -39,6 +39,13 @@ const app = new Hono()
       const deployment = await DBDeployments.findById(deploymentId, projectId);
       if (!deployment) {
         return notFound(c, "Deployment not found");
+      }
+
+      if (status === "BUILDING") {
+        await DBDeployments.update(deploymentId, {
+          buildStatus: "BUILDING",
+        });
+        return c.json({ success: true, message: "Build status updated" });
       }
 
       if (status === "SUCCESS") {

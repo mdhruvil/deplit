@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 export const updateBuildStatusSchema = z.object({
-  status: z.enum(["SUCCESS", "ERROR"]),
+  status: z.enum(["SUCCESS", "ERROR", "BUILDING"]),
   message: z.string(),
 });
 

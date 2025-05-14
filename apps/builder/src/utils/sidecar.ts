@@ -37,7 +37,10 @@ export class Sidecar {
     return response.json();
   }
 
-  async updateBuildStatus(status: "SUCCESS" | "ERROR", message: string = "") {
+  async updateBuildStatus(
+    status: "SUCCESS" | "ERROR" | "BUILDING",
+    message: string = "",
+  ) {
     const response = await this.$fetch("/build-status", {
       method: "POST",
       body: JSON.stringify({ status, message }),
