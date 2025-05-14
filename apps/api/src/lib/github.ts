@@ -80,7 +80,6 @@ export async function getCurrentUserRepos(accessToken: string) {
         new Date(a.updated_at ?? 0).getTime()
       );
     });
-
     // Return only the necessary repository information
     return repos.map((repo) => ({
       id: repo.id,
@@ -105,4 +104,26 @@ export async function getCurrentUserRepos(accessToken: string) {
     // Rethrow so that the calling code can handle it appropriately
     throw error;
   }
+}
+
+export async function getLastCommitForRepo({
+  owner,
+  repo,
+  ref,
+  accessToken,
+}: {
+  owner: string;
+  repo: string;
+  ref: string;
+  accessToken: string;
+}) {
+  const octokit = new Octokit({ auth: accessToken });
+
+  const { data } = await octokit.rest.repos.getCommit({
+    owner,
+    repo,
+    ref,
+  });
+
+  return data;
 }

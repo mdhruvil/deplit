@@ -124,6 +124,7 @@ function DeployComponent() {
       githubUrl: `https://github.com/${owner}/${repo}`,
       slug: data.slug,
       isSPA: data.isSPA,
+      defaultBranch,
     });
   }
 
