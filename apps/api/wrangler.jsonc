@@ -15,6 +15,12 @@
       "migrations_dir": "./drizzle-d1",
     },
   ],
+  "kv_namespaces": [
+    {
+      "binding": "SITES",
+      "id": "7ac1d3d3e61645b6bf121112ac761547",
+    },
+  ],
   "routes": [
     {
       "pattern": "deplit.tech/api*",

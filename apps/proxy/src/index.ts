@@ -1,4 +1,5 @@
 type Site = {
+  projectId: string;
   commitHash: string;
   spa?: boolean;
   htmlRoutes: Record<string, string>;
@@ -80,12 +81,12 @@ export default {
 
       if (site.htmlRoutes[url.pathname]) {
         url.pathname =
-          ["", subdomain, site.commitHash, ""].join("/") +
+          ["", site.projectId, site.commitHash, ""].join("/") +
           site.htmlRoutes[url.pathname];
       } else {
         // we dont need the trailing slash here because pathname is already has a leading slash
         url.pathname =
-          ["", subdomain, site.commitHash].join("/") + url.pathname;
+          ["", site.projectId, site.commitHash].join("/") + url.pathname;
       }
 
       url.hostname = env.BLOB_HOSTNAME;

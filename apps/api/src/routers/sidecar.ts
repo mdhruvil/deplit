@@ -5,6 +5,7 @@ import { bearerAuth } from "hono/bearer-auth";
 import { z } from "zod";
 import { DBDeployments } from "../db/queries/deployments";
 import { notFound } from "../utils";
+import { invalidateCacheByTag } from "../lib/postbuild";
 
 const updateBuildStatusSchema = z.object({
   status: z.enum(["SUCCESS", "ERROR"]),
@@ -45,6 +46,29 @@ const app = new Hono()
           deploymentId,
           projectId,
         );
+
+        let subdomain = deployment.project.slug;
+        if (deployment.target === "PREVIEW") {
+          subdomain = `${deployment.project.slug}-${deployment.gitCommitHash.slice(0, 7)}`;
+        }
+        await invalidateCacheByTag(`site:${subdomain}`);
+
+        // {"commitHash":"045ad814b6c07e16c8193418dbbc899e3a3ef257","spa":true,"htmlRoutes":{"/":"index.html"}}
+        // {"commitHash":"d60d2d71a08c9e174213eb34612345acb910ff50","htmlRoutes":{"/404":"404.html","/blog/html-intro":"blog/html-intro/index.html","/blog":"blog/index.html","/":"index.html","/projects":"projects/index.html","/projects/zaggonaut":"projects/zaggonaut/index.html"}}
+        const htmlRoutes: Record<string, string> = {};
+        if (deployment.metadata?.htmlRoutes) {
+          for (const route of deployment.metadata?.htmlRoutes) {
+            htmlRoutes[route.route] = route.path;
+          }
+        }
+
+        const data = {
+          projectId: deployment.projectId,
+          commitHash: deployment.gitCommitHash,
+          spa: deployment.project.isSPA,
+          htmlRoutes,
+        };
+        await env.SITES.put(subdomain, JSON.stringify(data));
       }
 
       await DBDeployments.update(deploymentId, {
