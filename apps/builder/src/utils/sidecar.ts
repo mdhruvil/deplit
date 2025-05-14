@@ -37,6 +37,42 @@ export class Sidecar {
     return response.json();
   }
 
+  /**
+   * Waits for the sidecar to be healthy by pinging the /health endpoint.
+   * @param timeoutMs maximum time to wait in milliseconds (default: 60000ms = 60 seconds)
+   * @param intervalMs interval between ping attempts in milliseconds (default: 500ms)
+   * @returns Promise that resolves when sidecar is healthy or rejects after timeout
+   */
+  async waitForSidecarHealth(
+    timeoutMs = 60000,
+    intervalMs = 500,
+  ): Promise<void> {
+    const startTime = Date.now();
+
+    while (Date.now() - startTime < timeoutMs) {
+      try {
+        const response = await this.$fetch("/health", {
+          method: "POST",
+        });
+
+        if (response.ok === true) {
+          console.log("[BUILDER-->SIDECAR] Health check successful");
+          return;
+        }
+      } catch {
+        // Ignore errors and continue trying until timeout
+        console.log("[BUILDER-->SIDECAR] Health check failed, retrying...");
+      }
+
+      // Wait before next attempt
+      await new Promise((resolve) => setTimeout(resolve, intervalMs));
+    }
+
+    throw new Error(
+      `[BUILDER-->SIDECAR] Health check timed out after ${timeoutMs}ms`,
+    );
+  }
+
   async updateBuildStatus(
     status: "SUCCESS" | "ERROR" | "BUILDING",
     message: string = "",

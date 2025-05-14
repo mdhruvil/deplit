@@ -34,6 +34,9 @@ const backendApiClient = new BackendApiClient(backendApiUrl, apiSidecarKey);
 
 const app = new Hono()
   .use("*", bearerAuth({ token }))
+  .post("/health", async (c) => {
+    return c.json({ ok: true });
+  })
   .post("/logs/ingest", zValidator("json", ingestLogsSchema), async (c) => {
     const body = c.req.valid("json");
     console.log(

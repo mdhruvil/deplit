@@ -65,6 +65,8 @@ async function main() {
     );
   }
 
+  await sidecar.waitForSidecarHealth();
+
   await cleanDest(cloneDest);
   await cleanDest(outDir);
 
