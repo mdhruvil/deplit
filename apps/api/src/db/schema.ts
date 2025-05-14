@@ -93,7 +93,18 @@ export const deployments = sqliteTable("deployments", {
    * - not found route
    * TODO: decide the format of the metadata
    */
-  metadata: text("metadata", { mode: "json" }),
+  metadata: text("metadata", { mode: "json" }).$type<{
+    htmlRoutes: {
+      path: string;
+      route: string;
+      size: number;
+    }[];
+    assetsRoutes: {
+      path: string;
+      route: string;
+      size: number;
+    }[];
+  }>(),
 
   ...timestamps,
 });
