@@ -66,7 +66,7 @@ export async function handleGithubPushEvent(
       gitCommitHash: lastCommitSha,
       gitRef: pushedBranchName,
       gitCommitMessage: lastCommit.message,
-      gitCommitAuthorName: lastCommit.author.name,
+      gitCommitAuthorName: lastCommit.author.username ?? lastCommit.author.name,
       gitCommitTimestamp: new Date(lastCommit.timestamp),
       alias: isProduction
         ? `${project.slug}.deplit.tech`
