@@ -103,7 +103,7 @@ function RouteComponent() {
       </div>
       <div className="mt-10 space-y-10">
         <div className="grid grid-cols-1 gap-6 rounded-md border p-5 md:grid-cols-2 md:gap-4">
-          <DeploymentDetailCard
+          {/* <DeploymentDetailCard
             title="Created"
             component={() => (
               <div className="flex items-center gap-1.5">
@@ -118,7 +118,7 @@ function RouteComponent() {
                 </p>
               </div>
             )}
-          />
+          /> */}
           <DeploymentDetailCard
             title="Status"
             component={() => {

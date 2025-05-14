@@ -107,7 +107,7 @@ const columns: ColumnDef<Deployment>[] = [
           to="/dashboard/project/$projectId/$deploymentId"
           params={{ deploymentId: row.original.id, projectId }}
         >
-          <div className="space-y-1 py-2 text-sm">
+          <div className="max-w-fit space-y-1 py-2 text-sm text-wrap">
             <p className="flex items-center gap-1 font-mono">
               <GitBranchIcon className="size-3" />
               {gitRef}
@@ -125,20 +125,15 @@ const columns: ColumnDef<Deployment>[] = [
   columnHelper.display({
     id: "git-commit-author-and-time",
     cell: ({ row }) => {
-      const { gitCommitAuthorName, gitCommitTimestamp, projectId } =
-        row.original;
+      const { gitCommitTimestamp, projectId } = row.original;
       return (
         <Link
           to="/dashboard/project/$projectId/$deploymentId"
           params={{ deploymentId: row.original.id, projectId }}
+          className="w-full"
         >
-          <div className="text-muted-foreground flex items-center gap-2 py-2 text-sm">
-            {formatDate(gitCommitTimestamp, "MMM dd")} by {gitCommitAuthorName}
-            <img
-              src={`https://github.com/${gitCommitAuthorName}.png`}
-              alt={gitCommitAuthorName + "'s image"}
-              className="size-6 rounded-full"
-            />
+          <div className="text-muted-foreground py-2 pr-3 text-end text-sm">
+            {formatDate(gitCommitTimestamp, "MMM dd")}
           </div>
         </Link>
       );
@@ -160,7 +155,7 @@ export function DeploymentTable({
 
   return (
     <div className="rounded-md border">
-      <Table className="table-fixed">
+      <Table className="">
         <TableBody>
           {table.getRowModel().rows?.length ? (
             table.getRowModel().rows.map((row) => (
