@@ -121,6 +121,7 @@ async function main() {
       cause: err,
     });
   });
+  logger.info("Site deployed.");
 
   logger.info("Assigning domain...");
   const { htmlRoutes, assetsRoutes } = await mapUrlToFilePath(outDir);
@@ -129,8 +130,10 @@ async function main() {
     assetsRoutes,
     outDir,
   );
+  logger.info("Domain assigned.");
 
   const buildDurationMs = performance.now() - buildStartTime;
+
   await sidecar.updateMetadata({
     htmlRoutes: htmlRoutesMetadata,
     assetsRoutes: assetsRoutesMetadata,

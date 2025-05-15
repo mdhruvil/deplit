@@ -8,6 +8,7 @@ import {
   updateBuildStatusSchema,
 } from "./validators.js";
 import { BackendApiClient } from "./backend-api-client.js";
+import { z } from "zod";
 
 const requiredEnvVars = [
   "DEPLIT_INTERNAL_API_TOKEN",
@@ -32,6 +33,8 @@ const projectId = process.env.DEPLIT_PROJECT_ID!;
 
 const backendApiClient = new BackendApiClient(backendApiUrl, apiSidecarKey);
 
+const logs: z.infer<typeof ingestLogsSchema>[] = [];
+
 const app = new Hono()
   .use("*", bearerAuth({ token }))
   .post("/health", async (c) => {
@@ -42,6 +45,11 @@ const app = new Hono()
     console.log(
       `${body.timestamp.toISOString()} [${body.level.toUpperCase()}]: ${body.message}`,
     );
+
+    await backendApiClient.ingestLogs({ ...body, deploymentId });
+
+    logs.push(body);
+
     return c.text("Logs received");
   })
   .post(
@@ -49,6 +57,14 @@ const app = new Hono()
     zValidator("json", updateBuildStatusSchema),
     async (c) => {
       const { status, message } = c.req.valid("json");
+      await new Promise((resolve) => setTimeout(resolve, 3000));
+      if (logs.length > 0) {
+        await backendApiClient.saveLogs({
+          deploymentId,
+          logs,
+        });
+        console.log("Backend API successfully updated with logs.");
+      }
 
       await backendApiClient.updateBuildStatus({
         status,

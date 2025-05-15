@@ -1,4 +1,5 @@
 import { Error } from "@/components/error";
+import { LogViewer, LogViewerWithPolling } from "@/components/log-viewer";
 import {
   Accordion,
   AccordionContent,
@@ -17,7 +18,6 @@ import {
 import { trpc } from "@/router";
 import { useQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
-import { format } from "date-fns";
 import {
   ArrowUpCircleIcon,
   ClockFadingIcon,
@@ -58,10 +58,23 @@ function RouteComponent() {
     }),
   });
   const { data, isLoading, error, isError } = useQuery(
-    trpc.deployment.getById.queryOptions({
-      deploymentId,
-      projectId,
-    }),
+    trpc.deployment.getById.queryOptions(
+      {
+        deploymentId,
+        projectId,
+      },
+      {
+        refetchInterval: (query) => {
+          const isInQueue = query.state.data?.buildStatus === "IN_QUEUE";
+          const isBuilding = query.state.data?.buildStatus === "BUILDING";
+          console.log({
+            isInQueue,
+            isBuilding,
+          });
+          return isInQueue || isBuilding ? 3000 : false;
+        },
+      },
+    ),
   );
 
   //TODO: add proper loading component
@@ -239,7 +252,14 @@ function RouteComponent() {
                   Build Logs
                 </AccordionTrigger>
                 <AccordionContent className="text-muted-foreground ps-7 pb-2">
-                  Logs
+                  {data.buildStatus === "BUILDING" ? (
+                    <LogViewerWithPolling
+                      deploymentId={deploymentId}
+                      poll={data.buildStatus === "BUILDING"}
+                    />
+                  ) : (
+                    <LogViewer deploymentId={deploymentId} />
+                  )}
                 </AccordionContent>
               </AccordionItem>
               <AccordionItem

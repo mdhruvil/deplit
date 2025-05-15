@@ -1,4 +1,8 @@
-import { metadataSchema, updateBuildStatusSchema } from "./validators.js";
+import {
+  ingestLogsSchema,
+  metadataSchema,
+  updateBuildStatusSchema,
+} from "./validators.js";
 import { z } from "zod";
 
 export type BuildStatusData = z.infer<typeof updateBuildStatusSchema> & {
@@ -7,6 +11,14 @@ export type BuildStatusData = z.infer<typeof updateBuildStatusSchema> & {
 };
 export type MetadataData = z.infer<typeof metadataSchema> & {
   deploymentId: string;
+};
+export type IngestLogsData = z.infer<typeof ingestLogsSchema> & {
+  deploymentId: string;
+};
+
+export type SaveLogsData = {
+  deploymentId: string;
+  logs: z.infer<typeof ingestLogsSchema>[];
 };
 
 export class BackendApiClient {
@@ -59,6 +71,20 @@ export class BackendApiClient {
 
   async updateMetadata(data: MetadataData) {
     return this.$fetch("/metadata", {
+      method: "POST",
+      body: JSON.stringify(data),
+    });
+  }
+
+  async ingestLogs(data: IngestLogsData) {
+    return this.$fetch("/logs/ingest", {
+      method: "POST",
+      body: JSON.stringify(data),
+    });
+  }
+
+  async saveLogs(data: SaveLogsData) {
+    return this.$fetch("/logs", {
       method: "POST",
       body: JSON.stringify(data),
     });

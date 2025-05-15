@@ -10,6 +10,7 @@ import { sidecarRouter } from "./routers/sidecar";
 import { appRouter } from "./routers/trpc/app-router";
 import { createTRPCContext } from "./trpc";
 import { notFound } from "./utils";
+import { DurableLogger } from "./do/logger";
 
 export type Env = {
   Variables: {
@@ -68,4 +69,5 @@ const app = new Hono<Env>({ strict: false })
 
 export type AppRouter = typeof appRouter;
 
+export { DurableLogger };
 export default app;
