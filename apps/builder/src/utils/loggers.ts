@@ -72,6 +72,7 @@ export const logger = winston.createLogger({
             return "missing-token";
           })(),
       },
+      batch: false,
       handleExceptions: true,
       handleRejections: true,
     }),

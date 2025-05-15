@@ -7,6 +7,12 @@
   "observability": {
     "enabled": true,
   },
+  "routes": [
+    {
+      "pattern": "deplit.tech/api*",
+      "zone_name": "deplit.tech",
+    },
+  ],
   "d1_databases": [
     {
       "binding": "DB",
@@ -20,11 +26,24 @@
       "binding": "SITES",
       "id": "7ac1d3d3e61645b6bf121112ac761547",
     },
-  ],
-  "routes": [
     {
-      "pattern": "deplit.tech/api*",
-      "zone_name": "deplit.tech",
+      "binding": "LOGS",
+      "id": "41cd81046334467681bd570ceec870e9",
+    },
+  ],
+  "durable_objects": {
+    "bindings": [
+      {
+        "name": "LOGGER",
+        "class_name": "DurableLogger",
+      },
+    ],
+  },
+
+  "migrations": [
+    {
+      "tag": "v1",
+      "new_classes": ["DurableLogger"],
     },
   ],
 }

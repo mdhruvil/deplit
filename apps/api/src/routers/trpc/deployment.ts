@@ -3,6 +3,7 @@ import { DBDeployments } from "../../db/queries/deployments";
 import { protectedProcedure, router } from "../../trpc";
 import { TRPCError } from "@trpc/server";
 import { deploymentInsertSchema } from "../../db/validators";
+import { env } from "cloudflare:workers";
 
 export const deploymentsRouter = router({
   getAll: protectedProcedure
@@ -43,5 +44,41 @@ export const deploymentsRouter = router({
     .mutation(async ({ input }) => {
       const result = await DBDeployments.create(input.projectId, input.data);
       return result;
+    }),
+
+  pollLogs: protectedProcedure
+    .input(z.object({ deploymentId: z.string() }))
+    .query(async ({ input }) => {
+      const doId = env.LOGGER.idFromName("deployment:" + input.deploymentId);
+      const doStub = env.LOGGER.get(doId);
+      const logs = await doStub.getLogs();
+
+      const data = logs.map((log) => ({
+        message: log.message,
+        timestamp: log.timestamp,
+        level: log.level,
+      }));
+
+      return data as {
+        message: string;
+        timestamp: Date;
+        level: string;
+      }[];
+    }),
+
+  getLogs: protectedProcedure
+    .input(z.object({ deploymentId: z.string() }))
+    .query(async ({ input }) => {
+      const logs = await env.LOGS.get(`deployment:${input.deploymentId}`, {
+        type: "json",
+      });
+      if (!logs) {
+        return [];
+      }
+      return logs as {
+        message: string;
+        timestamp: Date;
+        level: string;
+      }[];
     }),
 });

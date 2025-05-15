@@ -27,9 +27,49 @@ const metadataSchema = z.object({
   buildDurationMs: z.number(),
 });
 
+const logSchema = z.object({
+  deploymentId: z.string(),
+  level: z.string(),
+  message: z.string(),
+  timestamp: z.coerce.date(),
+});
+
 const app = new Hono()
   .use("*", bearerAuth({ token: env.API_SIDECAR_KEY }))
+  .post("/logs/ingest", zValidator("json", logSchema), async (c) => {
+    const { deploymentId, message, level, timestamp } = c.req.valid("json");
+    const doId = env.LOGGER.idFromName("deployment:" + deploymentId);
+    const doStub = env.LOGGER.get(doId);
 
+    c.executionCtx.waitUntil(
+      doStub.pushLog({
+        message,
+        timestamp,
+        level,
+      }),
+    );
+    return c.json({ success: true, message: "Ingested" });
+  })
+  .post(
+    "/logs",
+    zValidator(
+      "json",
+      z.object({
+        deploymentId: z.string(),
+        logs: z.array(logSchema.omit({ deploymentId: true })),
+      }),
+    ),
+    async (c) => {
+      const data = c.req.valid("json");
+      console.log("Logs", data);
+
+      await env.LOGS.put(
+        `deployment:${data.deploymentId}`,
+        JSON.stringify(data.logs),
+      );
+      return c.json({ success: true, message: "Logs updated" });
+    },
+  )
   .post(
     "/build-status",
     zValidator("json", updateBuildStatusSchema),
