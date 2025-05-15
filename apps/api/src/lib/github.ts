@@ -12,6 +12,8 @@ export async function getCurrentUserRepos(accessToken: string) {
     // Create authenticated Octokit instance with user's access token
     const octokit = new Octokit({ auth: accessToken });
 
+    console.log("Access token:", accessToken);
+
     // Get the user's GitHub App installations
     const installationsResponse = await octokit.rest.apps
       .listInstallationsForAuthenticatedUser()
@@ -21,41 +23,30 @@ export async function getCurrentUserRepos(accessToken: string) {
       });
 
     const { installations } = installationsResponse.data;
+    console.log("Installations response:", installations);
 
     if (!installations || installations.length === 0) {
       // Return empty array if no installations found
       return [];
     }
 
-    // Initialize GitHub App
-    let app;
-    try {
-      app = new App({
-        appId: env.GITHUB_CLIENT_ID,
-        privateKey: env.GITHUB_PRIVATE_KEY,
-      });
-    } catch (error) {
-      console.error("Failed to initialize GitHub App:", error);
-      throw new Error(
-        `GitHub App initialization error: ${error instanceof Error ? error.message : "Unknown error"}`,
-      );
-    }
-
     // Create promises for fetching repositories from each installation
     const repoPromises = installations.map(async (installation) => {
       try {
-        // Get Octokit instance for this installation
-        const installationOctokit = await app.getInstallationOctokit(
-          installation.id,
+        // Use the user's access token to fetch repositories for this installation
+        const repos = await octokit.paginate(
+          octokit.rest.apps.listInstallationReposForAuthenticatedUser,
+          {
+            installation_id: installation.id,
+            per_page: 100,
+          },
         );
 
-        // Fetch repositories accessible to this installation
-        const repositories = await installationOctokit.paginate(
-          installationOctokit.rest.apps.listReposAccessibleToInstallation,
-          { per_page: 100 },
+        console.log(
+          `Fetched ${repos.length} repositories for installation ${installation.id}.`,
         );
 
-        return repositories;
+        return repos;
       } catch (error) {
         console.error(
           `Error fetching repos for installation ${installation.id}:`,
@@ -73,6 +64,7 @@ export async function getCurrentUserRepos(accessToken: string) {
     // Flatten the array of arrays into a single array of repositories
     const repos = reposArrays.flat();
 
+    console.log(`Total repositories fetched: ${repos.length}`);
     // Sort repositories by updated_at date (most recent first)
     repos.sort((a, b) => {
       return (
