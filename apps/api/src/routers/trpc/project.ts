@@ -6,6 +6,9 @@ import { projectInsertSchema, projectUpdateSchema } from "../../db/validators";
 import { getAccountFromUserId } from "../../lib/auth";
 import { getLastCommitForRepo } from "../../lib/github";
 import { createDeploymentAndScheduleIt } from "../../lib/schedule-build";
+import { DBDeployments } from "../../db/queries/deployments";
+import { env } from "cloudflare:workers";
+import { invalidateCacheByTag } from "../../lib/postbuild";
 
 export const projectRouter = router({
   getAll: protectedProcedure.query(async ({ ctx }) => {
@@ -24,6 +27,61 @@ export const projectRouter = router({
         });
       }
       return project;
+    }),
+
+  instantRollback: protectedProcedure
+    .input(
+      z.object({
+        projectId: z.string().uuid(),
+        deploymentId: z.string().uuid(),
+      }),
+    )
+    .mutation(async ({ input }) => {
+      const { projectId, deploymentId } = input;
+      const deployment = await DBDeployments.findById(deploymentId, projectId);
+      if (!deployment) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Deployment not found",
+        });
+      }
+
+      if (deployment.target !== "PRODUCTION") {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Only production deployments can be rolled back",
+        });
+      }
+
+      const promises = [
+        DBDeployments.setAllProdDeploymentsToInactiveExcept(
+          deploymentId,
+          projectId,
+        ),
+        DBDeployments.update(deploymentId, {
+          activeState: "ACTIVE",
+        }),
+      ];
+
+      await Promise.all(promises);
+
+      let subdomain = deployment.project.slug;
+      await invalidateCacheByTag(`site:${subdomain}`);
+
+      const htmlRoutes: Record<string, string> = {};
+      if (deployment.metadata?.htmlRoutes) {
+        for (const route of deployment.metadata?.htmlRoutes) {
+          htmlRoutes[route.route] = route.path;
+        }
+      }
+
+      const data = {
+        projectId: deployment.projectId,
+        commitHash: deployment.gitCommitHash,
+        spa: deployment.project.isSPA,
+        htmlRoutes,
+      };
+      await env.SITES.put(subdomain, JSON.stringify(data));
     }),
 
   create: protectedProcedure

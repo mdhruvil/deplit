@@ -59,8 +59,14 @@ const columns: ColumnDef<Deployment>[] = [
   columnHelper.display({
     id: "build-status-and-duration",
     cell: ({ row }) => {
-      const { buildStatus, buildDurationMs, createdAt, projectId } =
-        row.original;
+      const {
+        buildStatus,
+        buildDurationMs,
+        createdAt,
+        projectId,
+        activeState,
+        target,
+      } = row.original;
 
       const buildStatusMsgMap: Record<typeof buildStatus, string> = {
         IN_QUEUE: "In Queue",
@@ -81,13 +87,18 @@ const columns: ColumnDef<Deployment>[] = [
           params={{ deploymentId: row.original.id, projectId }}
         >
           <div className="space-y-1 py-2 text-sm">
-            <Badge variant="secondary" className="gap-1.5">
-              <span
-                className={`size-1.5 rounded-full ${statusColorMap[buildStatus]}`}
-                aria-hidden="true"
-              ></span>
-              {buildStatusMsgMap[buildStatus]}
-            </Badge>
+            <div className="flex items-center gap-1">
+              <Badge variant="secondary" className="gap-1.5">
+                <span
+                  className={`size-1.5 rounded-full ${statusColorMap[buildStatus]}`}
+                  aria-hidden="true"
+                ></span>
+                {buildStatusMsgMap[buildStatus]}
+              </Badge>
+              {target === "PRODUCTION" && activeState === "ACTIVE" && (
+                <Badge variant="outline">Active</Badge>
+              )}
+            </div>
             <p className="text-muted-foreground text-xs">
               {formatMilliseconds(buildDurationMs ?? 0)} (
               {formatDateToDaysFromNow(createdAt)})
