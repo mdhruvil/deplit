@@ -1,6 +1,7 @@
 import { cn } from "@/lib/utils";
 import { trpc } from "@/router";
 import { useQuery } from "@tanstack/react-query";
+import { Error } from "./error";
 
 export function LogViewerWithPolling({
   deploymentId,
@@ -17,11 +18,11 @@ export function LogViewerWithPolling({
   );
 
   if (isLoading) {
-    return <div>Loading logs...</div>;
+    return <LogViewerLoading />;
   }
 
   if (error || !data) {
-    return <div>Error loading logs: {error?.message}</div>;
+    return <Error message={error?.message} />;
   }
   return (
     <div className="h-100 overflow-auto font-mono">
@@ -57,11 +58,11 @@ export function LogViewer({
   );
 
   if (isLoading) {
-    return <div>Loading logs...</div>;
+    return <LogViewerLoading />;
   }
 
   if (error || !data) {
-    return <div>Error loading logs: {error?.message}</div>;
+    return <Error message={error?.message} />;
   }
   return (
     <div className="h-100 overflow-auto font-mono">
@@ -82,6 +83,14 @@ export function LogViewer({
           <p>{log.message}</p>
         </div>
       ))}
+    </div>
+  );
+}
+
+function LogViewerLoading() {
+  return (
+    <div className="flex h-100 items-center justify-center font-mono">
+      <p className="text-gray-500">Loading logs...</p>
     </div>
   );
 }
