@@ -53,13 +53,13 @@ export const deploymentsRouter = router({
       const doStub = env.LOGGER.get(doId);
       const logs = await doStub.getLogs();
 
-      const data = logs.map((log) => ({
-        message: log.message,
-        timestamp: log.timestamp,
-        level: log.level,
-      }));
+      logs.sort((a, b) => {
+        return (
+          new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime()
+        );
+      });
 
-      return data as {
+      return logs as {
         message: string;
         timestamp: Date;
         level: string;
@@ -69,15 +69,28 @@ export const deploymentsRouter = router({
   getLogs: protectedProcedure
     .input(z.object({ deploymentId: z.string() }))
     .query(async ({ input }) => {
-      const logs = await env.LOGS.get(`deployment:${input.deploymentId}`, {
+      const logs = (await env.LOGS.get(`deployment:${input.deploymentId}`, {
         type: "json",
-      });
+      })) as unknown as
+        | {
+            message: string;
+            timestamp: string;
+            level: string;
+          }[]
+        | null;
+
       if (!logs) {
         return [];
       }
+      // sort based on timestamp
+      logs.sort((a, b) => {
+        return (
+          new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime()
+        );
+      });
       return logs as {
         message: string;
-        timestamp: Date;
+        timestamp: string;
         level: string;
       }[];
     }),

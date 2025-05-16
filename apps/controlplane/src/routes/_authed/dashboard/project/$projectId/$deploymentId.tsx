@@ -127,7 +127,9 @@ function RouteComponent() {
             <Button
               variant="outline"
               loading={instantRollbackMutation.isPending}
-              disabled={data.activeState === "ACTIVE"}
+              disabled={
+                data.activeState === "ACTIVE" || data.buildStatus !== "SUCCESS"
+              }
               onClick={() => {
                 instantRollbackMutation.mutate({
                   projectId: data.projectId,
@@ -198,10 +200,16 @@ function RouteComponent() {
             component={() => (
               <div className="flex items-center gap-2 text-sm">
                 <ClockFadingIcon className="size-4" />
-                <p>{formatMilliseconds(data.buildDurationMs ?? 0)} </p>
-                <p className="text-muted-foreground">
-                  ({formatDateToDaysFromNow(data.createdAt)})
-                </p>
+                {data.buildStatus === "SUCCESS" ? (
+                  <>
+                    <p>{formatMilliseconds(data.buildDurationMs ?? 0)} </p>
+                    <p className="text-muted-foreground">
+                      ({formatDateToDaysFromNow(data.createdAt)})
+                    </p>
+                  </>
+                ) : (
+                  <p>N/A</p>
+                )}
               </div>
             )}
           />
@@ -221,14 +229,18 @@ function RouteComponent() {
             component={() => (
               <div className="flex items-center gap-2 text-sm">
                 <GlobeIcon className="size-4" />
-                <a
-                  href={"https://" + data.alias}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="hover:underline"
-                >
-                  {data.alias}
-                </a>
+                {data.buildStatus === "SUCCESS" ? (
+                  <a
+                    href={"https://" + data.alias}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="hover:underline"
+                  >
+                    {data.alias}
+                  </a>
+                ) : (
+                  <p>Site is not deployed yet.</p>
+                )}
               </div>
             )}
           />
@@ -282,7 +294,7 @@ function RouteComponent() {
                 <AccordionTrigger className="justify-start gap-3 py-2 text-[15px] leading-6 hover:no-underline focus-visible:ring-0 [&>svg]:-order-1 [&>svg]:-rotate-90 [&[data-state=open]>svg]:rotate-0">
                   Build Logs
                 </AccordionTrigger>
-                <AccordionContent className="text-muted-foreground ps-7 pb-2">
+                <AccordionContent className="text-muted-foreground px-7 py-3">
                   {data.buildStatus === "BUILDING" ? (
                     <LogViewerWithPolling
                       deploymentId={deploymentId}

@@ -25,23 +25,14 @@ export function LogViewerWithPolling({
     return <Error message={error?.message} />;
   }
   return (
-    <div className="h-100 overflow-auto font-mono">
+    <div className="h-150 overflow-auto font-mono">
       {data.length === 0 && (
         <div className="flex h-full items-center justify-center">
           <p className="text-gray-500">No logs available</p>
         </div>
       )}
       {data.map((log, index) => (
-        <div
-          key={index}
-          className={cn(
-            "flex items-start gap-10",
-            log.level === "error" && "text-destructive",
-          )}
-        >
-          <p>{new Date(log.timestamp).toISOString()}</p>
-          <p>{log.message}</p>
-        </div>
+        <LogLine key={index} log={log} />
       ))}
     </div>
   );
@@ -65,23 +56,14 @@ export function LogViewer({
     return <Error message={error?.message} />;
   }
   return (
-    <div className="h-100 overflow-auto font-mono">
+    <div className="h-150 overflow-auto font-mono leading-normal">
       {data.length === 0 && (
         <div className="flex h-full items-center justify-center">
           <p className="text-gray-500">No logs available</p>
         </div>
       )}
       {data.map((log, index) => (
-        <div
-          key={index}
-          className={cn(
-            "flex items-start gap-10",
-            log.level === "error" && "text-destructive",
-          )}
-        >
-          <p>{new Date(log.timestamp).toISOString()}</p>
-          <p>{log.message}</p>
-        </div>
+        <LogLine key={index} log={log} />
       ))}
     </div>
   );
@@ -91,6 +73,24 @@ function LogViewerLoading() {
   return (
     <div className="flex h-100 items-center justify-center font-mono">
       <p className="text-gray-500">Loading logs...</p>
+    </div>
+  );
+}
+
+function LogLine({
+  log,
+}: {
+  log: { message: string; timestamp: Date | string; level: string };
+}) {
+  return (
+    <div
+      className={cn(
+        "flex items-start gap-5",
+        log.level === "error" && "text-destructive",
+      )}
+    >
+      <p className="select-none">{new Date(log.timestamp).toISOString()}</p>
+      <p>{log.message}</p>
     </div>
   );
 }

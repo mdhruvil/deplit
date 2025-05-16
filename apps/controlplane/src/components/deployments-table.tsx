@@ -99,10 +99,14 @@ const columns: ColumnDef<Deployment>[] = [
                 <Badge variant="outline">Active</Badge>
               )}
             </div>
-            <p className="text-muted-foreground text-xs">
-              {formatMilliseconds(buildDurationMs ?? 0)} (
-              {formatDateToDaysFromNow(createdAt)})
-            </p>
+            {buildStatus === "SUCCESS" ? (
+              <p className="text-muted-foreground text-xs">
+                {formatMilliseconds(buildDurationMs ?? 0)} (
+                {formatDateToDaysFromNow(createdAt)})
+              </p>
+            ) : (
+              <p className="text-muted-foreground text-xs">N/A</p>
+            )}
           </div>
         </Link>
       );
