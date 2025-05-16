@@ -25,7 +25,7 @@ function RootComponent() {
       {/* eslint-disable-next-line turbo/no-undeclared-env-vars */}
       {import.meta.env.DEV && (
         <Suspense fallback={null}>
-          <TanStackRouterDevtools position="bottom-right" />;
+          <TanStackRouterDevtools position="bottom-right" />
         </Suspense>
       )}
     </>
