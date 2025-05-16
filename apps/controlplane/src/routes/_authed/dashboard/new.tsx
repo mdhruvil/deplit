@@ -1,5 +1,5 @@
 import { Error } from "@/components/error";
-import { buttonVariants } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -10,10 +10,22 @@ import {
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Skeleton } from "@/components/ui/skeleton";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { trpc } from "@/router";
 import { useQuery } from "@tanstack/react-query";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ArrowRight, GlobeIcon, LockIcon, SearchIcon } from "lucide-react";
+import {
+  ArrowRight,
+  CircleAlertIcon,
+  GlobeIcon,
+  LockIcon,
+  SearchIcon,
+} from "lucide-react";
 import { useState } from "react";
 
 export const Route = createFileRoute("/_authed/dashboard/new")({
@@ -57,6 +69,23 @@ function CreateNewProjectComponent() {
           <CardDescription>Import a new project from GitHub</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
+          <div className="rounded-md border px-4 py-3">
+            <div className="flex gap-3">
+              <CircleAlertIcon
+                className="mt-1 shrink-0 text-amber-600 opacity-60"
+                size={16}
+                aria-hidden="true"
+              />
+              <div className="grow space-y-1">
+                <p className="text-sm font-medium">
+                  Currently only static sites are supported.
+                </p>
+                <p className="text-muted-foreground text-sm">
+                  Serverless function support is coming soon.
+                </p>
+              </div>
+            </div>
+          </div>
           <div className="relative flex-1">
             <SearchIcon className="text-muted-foreground absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2" />
             <Input
@@ -81,7 +110,7 @@ function CreateNewProjectComponent() {
               </a>
             </div>
           ) : null}
-          {filteredRepos.length === 0 ? (
+          {filteredRepos.length === 0 && data.length !== 0 ? (
             <div className="text-muted-foreground">
               No repositories found for &quot;{search}&quot;
               <a
@@ -166,17 +195,32 @@ function RepoCard({ repo }: RepoCardProps) {
         </div>
       </div>
 
-      <Link
-        className={buttonVariants({ size: "sm" })}
-        to="/dashboard/deploy"
-        search={{
-          owner: repo.full_name.split("/")[0] ?? "",
-          repo: repo.full_name.split("/")[1] ?? "",
-          defaultBranch: repo.default_branch,
-        }}
-      >
-        Deploy
-      </Link>
+      {repo.visibility === "public" ? (
+        <Link
+          className={buttonVariants({ size: "sm" })}
+          to="/dashboard/deploy"
+          search={{
+            owner: repo.full_name.split("/")[0] ?? "",
+            repo: repo.full_name.split("/")[1] ?? "",
+            defaultBranch: repo.default_branch,
+          }}
+        >
+          Deploy
+        </Link>
+      ) : (
+        <TooltipProvider>
+          <Tooltip delayDuration={0}>
+            <TooltipTrigger>
+              <Button size="sm" className="cursor-not-allowed">
+                Deploy
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent className="dark">
+              <p>Private repositories are not supported yet.</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+      )}
     </div>
   );
 }

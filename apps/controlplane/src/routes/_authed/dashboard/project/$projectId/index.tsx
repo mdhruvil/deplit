@@ -92,10 +92,10 @@ function ProjectComponentSkeleton() {
       <div className="flex items-center justify-between">
         <div className="space-y-2">
           <h2 className="text-2xl font-semibold">Deployments</h2>
-          <p className="text-muted-foreground flex items-center gap-2 text-sm">
+          <div className="text-muted-foreground flex items-center gap-2 text-sm">
             <RefreshCwIcon className="size-4" />
             Continuously generated from <Skeleton className="h-4 w-32" />
-          </p>
+          </div>
         </div>
         <div>
           <Button variant="outline" loading={true}>

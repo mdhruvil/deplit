@@ -7,7 +7,7 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { Badge } from "@/components/ui/badge";
-import { buttonVariants } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   cn,
@@ -16,7 +16,7 @@ import {
   formatMilliseconds,
 } from "@/lib/utils";
 import { trpc } from "@/router";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import {
   ArrowUpCircleIcon,
@@ -25,7 +25,9 @@ import {
   GitBranchIcon,
   GitCommitIcon,
   GlobeIcon,
+  RotateCwIcon,
 } from "lucide-react";
+import { toast } from "sonner";
 
 type RouteMetaData = {
   route: string;
@@ -57,7 +59,7 @@ function RouteComponent() {
       deploymentId: d.deploymentId,
     }),
   });
-  const { data, isLoading, error, isError } = useQuery(
+  const { data, isLoading, error, isError, refetch } = useQuery(
     trpc.deployment.getById.queryOptions(
       {
         deploymentId,
@@ -67,14 +69,21 @@ function RouteComponent() {
         refetchInterval: (query) => {
           const isInQueue = query.state.data?.buildStatus === "IN_QUEUE";
           const isBuilding = query.state.data?.buildStatus === "BUILDING";
-          console.log({
-            isInQueue,
-            isBuilding,
-          });
           return isInQueue || isBuilding ? 3000 : false;
         },
       },
     ),
+  );
+  const instantRollbackMutation = useMutation(
+    trpc.project.instantRollback.mutationOptions({
+      onSettled: () => {
+        return refetch();
+      },
+      onError: (error) => {
+        console.error("Error rolling back deployment:", error);
+        toast.error(error.message ?? "Something went wrong");
+      },
+    }),
   );
 
   //TODO: add proper loading component
@@ -104,15 +113,33 @@ function RouteComponent() {
     <div>
       <div className="flex items-center justify-between">
         <h2 className="text-2xl font-semibold">Deployments</h2>
-        <a
-          href={"https://" + data.alias}
-          target="_blank"
-          rel="noreferrer"
-          className={buttonVariants()}
-        >
-          Visit
-          <ExternalLinkIcon className="size-4" />
-        </a>
+        <div className="flex items-center gap-2">
+          <a
+            href={"https://" + data.alias}
+            target="_blank"
+            rel="noreferrer"
+            className={buttonVariants()}
+          >
+            Visit
+            <ExternalLinkIcon className="size-4" />
+          </a>
+          {data.target === "PRODUCTION" && (
+            <Button
+              variant="outline"
+              loading={instantRollbackMutation.isPending}
+              disabled={data.activeState === "ACTIVE"}
+              onClick={() => {
+                instantRollbackMutation.mutate({
+                  projectId: data.projectId,
+                  deploymentId: data.id,
+                });
+              }}
+            >
+              <RotateCwIcon className="size-4" />
+              Instant Rollback
+            </Button>
+          )}
+        </div>
       </div>
       <div className="mt-10 space-y-10">
         <div className="grid grid-cols-1 gap-6 rounded-md border p-5 md:grid-cols-2 md:gap-4">
@@ -150,7 +177,7 @@ function RouteComponent() {
                 FAILED: "bg-red-500",
               };
               return (
-                <div>
+                <div className="flex items-center gap-1">
                   <Badge variant="secondary" className="gap-1.5">
                     <span
                       className={`size-1.5 rounded-full ${statusColorMap[data.buildStatus]}`}
@@ -158,6 +185,10 @@ function RouteComponent() {
                     ></span>
                     {buildStatusMsgMap[data.buildStatus]}
                   </Badge>
+                  {data.target === "PRODUCTION" &&
+                    data.activeState === "ACTIVE" && (
+                      <Badge variant="outline">Active</Badge>
+                    )}
                 </div>
               );
             }}

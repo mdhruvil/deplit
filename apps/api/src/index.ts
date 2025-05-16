@@ -37,7 +37,7 @@ const app = new Hono<Env>({ strict: false })
     return c.json({ success: true, message: "Hello Hono!" });
   })
   .on(["POST", "GET"], "/auth/**", (c) => auth.handler(c.req.raw))
-  .get("/auth-redirect", (c) => c.redirect(`${env.CONTROL_PANE_URL}/profile`))
+  .get("/auth-redirect", (c) => c.redirect(`${env.CONTROL_PANE_URL}/dashboard`))
   .route("/github", githubRouter)
   /**
    * This router handles requests coming from the sidecar.
