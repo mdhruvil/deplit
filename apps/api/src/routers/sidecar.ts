@@ -120,7 +120,10 @@ const app = new Hono()
 
       await DBDeployments.update(deploymentId, {
         buildStatus: status === "SUCCESS" ? "SUCCESS" : "FAILED",
-        activeState: deployment.target === "PRODUCTION" ? "ACTIVE" : "NA",
+        activeState:
+          deployment.target === "PRODUCTION" && status === "SUCCESS"
+            ? "ACTIVE"
+            : "NA",
       });
       return c.json({ success: true, message: "Build status updated" });
     },
