@@ -1,10 +1,9 @@
 import { GridPattern } from "@/components/grid-pattern";
 import { GithubIcon } from "@/components/icons";
-import { Button, buttonVariants } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import {
-  AlertTriangleIcon,
   GitBranchPlusIcon,
   GlobeIcon,
   Link2Icon,
