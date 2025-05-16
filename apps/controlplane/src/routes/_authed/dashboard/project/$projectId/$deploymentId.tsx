@@ -69,10 +69,6 @@ function RouteComponent() {
         refetchInterval: (query) => {
           const isInQueue = query.state.data?.buildStatus === "IN_QUEUE";
           const isBuilding = query.state.data?.buildStatus === "BUILDING";
-          console.log({
-            isInQueue,
-            isBuilding,
-          });
           return isInQueue || isBuilding ? 3000 : false;
         },
       },
