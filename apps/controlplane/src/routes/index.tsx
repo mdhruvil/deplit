@@ -1,9 +1,13 @@
+import { getSessionQueryOptions } from "@/api/get-session";
+import { Error } from "@/components/error";
 import { GridPattern } from "@/components/grid-pattern";
 import { GithubIcon } from "@/components/icons";
-import { buttonVariants } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { useQuery } from "@tanstack/react-query";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import {
+  ArrowRightIcon,
   GitBranchPlusIcon,
   GlobeIcon,
   Link2Icon,
@@ -13,9 +17,15 @@ import {
 
 export const Route = createFileRoute("/")({
   component: HomeComponent,
+  loader: ({ context: { queryClient } }) =>
+    queryClient.ensureQueryData(getSessionQueryOptions()),
+  errorComponent: ({ error }) => {
+    return <Error message={error.message} />;
+  },
 });
 
 function HomeComponent() {
+  const { data, isLoading } = useQuery(getSessionQueryOptions());
   return (
     <section className="relative h-screen overflow-hidden py-32">
       <div className="absolute inset-x-0 top-0 flex h-full w-full items-center justify-center opacity-100">
@@ -51,13 +61,21 @@ function HomeComponent() {
             </p>
           </div>
           <div className="mt-6 flex justify-center gap-3">
-            <Link
-              to="/login"
-              search={{ redirect: "/dashboard" }}
-              className={buttonVariants()}
-            >
-              Get Started
-            </Link>
+            {isLoading && <Button loading>Get Started</Button>}
+            {!isLoading && data?.user && (
+              <Link to="/dashboard" className={buttonVariants()}>
+                Dashboard <ArrowRightIcon className="size-4" />
+              </Link>
+            )}
+            {!isLoading && !data?.user && (
+              <Link
+                to="/login"
+                search={{ redirect: "/dashboard" }}
+                className={buttonVariants()}
+              >
+                Get Started
+              </Link>
+            )}
             <a
               href="https://github.com/mdhruvil/deplit"
               target="_blank"
