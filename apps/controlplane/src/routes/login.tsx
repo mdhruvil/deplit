@@ -9,18 +9,25 @@ import { createFileRoute, redirect } from "@tanstack/react-router";
 export const Route = createFileRoute("/login")({
   component: LoginComponent,
   validateSearch: (search: Record<string, unknown>) => {
+    const redirect = search?.redirect;
+    if (typeof redirect !== "string" || !redirect.startsWith("/")) {
+      return {
+        redirect: "/dashboard",
+      };
+    }
     return {
-      redirect: (search?.redirect as string) ?? "/dashboard",
+      redirect: (redirect as string) ?? "/dashboard",
     };
   },
 });
 
 function LoginComponent() {
+  const { redirect: redirectPath } = Route.useSearch();
   const githubMutation = useMutation({
     mutationFn: async () => {
       return await authClient.signIn.social({
         provider: "github",
-        callbackURL: "/api/auth-redirect",
+        callbackURL: `/api/auth-redirect?redirect=${redirectPath}`,
       });
     },
     onSettled: async (data) => {

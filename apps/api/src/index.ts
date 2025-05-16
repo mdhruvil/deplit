@@ -3,6 +3,8 @@ import { env } from "cloudflare:workers";
 import { Hono } from "hono";
 import { cors } from "hono/cors";
 import { HTTPException } from "hono/http-exception";
+import { logger } from "hono/logger";
+import { DurableLogger } from "./do/logger";
 import { auth } from "./lib/auth";
 import { authMiddleware } from "./middleware/auth";
 import { githubRouter } from "./routers/github";
@@ -10,7 +12,6 @@ import { sidecarRouter } from "./routers/sidecar";
 import { appRouter } from "./routers/trpc/app-router";
 import { createTRPCContext } from "./trpc";
 import { notFound } from "./utils";
-import { DurableLogger } from "./do/logger";
 
 export type Env = {
   Variables: {
@@ -21,6 +22,7 @@ export type Env = {
 
 const app = new Hono<Env>({ strict: false })
   .basePath("/api")
+  .use(logger(console.log))
   .use(
     "*",
     cors({
@@ -37,7 +39,13 @@ const app = new Hono<Env>({ strict: false })
     return c.json({ success: true, message: "Hello Hono!" });
   })
   .on(["POST", "GET"], "/auth/**", (c) => auth.handler(c.req.raw))
-  .get("/auth-redirect", (c) => c.redirect(`${env.CONTROL_PANE_URL}/dashboard`))
+  .get("/auth-redirect", (c) => {
+    const redirect = c.req.query("redirect") ?? "/dashboard";
+    if (!redirect.startsWith("/")) {
+      return c.redirect(`${env.CONTROL_PANE_URL}/dashboard`);
+    }
+    return c.redirect(`${env.CONTROL_PANE_URL}${redirect}`);
+  })
   .route("/github", githubRouter)
   /**
    * This router handles requests coming from the sidecar.
