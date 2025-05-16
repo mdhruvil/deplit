@@ -9,7 +9,8 @@
     "build": "vite build",
     "serve": "vite preview",
     "start": "vite",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "shadcn": "shadcn"
   },
   "devDependencies": {
     "@deplit/api": "workspace:^",
