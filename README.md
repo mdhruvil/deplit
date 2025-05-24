@@ -60,3 +60,9 @@ TODO
 ## 📄 License
 
 [MIT](./LICENSE)
+
+## 📸 Screenshots
+
+![dashboard-home](./screenshots/dashboard-home.png)
+![deployments](./screenshots/deployments.png)
+![deployment-page](./screenshots/deployment-page.png)
