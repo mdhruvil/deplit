@@ -2,6 +2,9 @@ name: (PROXY):build and deploy api to cloudflare worker
 
 on:
   push:
+    paths:
+      - "apps/proxy/**"
+      - ".github/workflows/deploy-proxy-cf-worker.yml"
     branches:
       - main
   workflow_dispatch:

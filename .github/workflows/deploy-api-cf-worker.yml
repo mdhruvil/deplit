@@ -2,6 +2,9 @@ name: (API):build and deploy api to cloudflare worker
 
 on:
   push:
+    paths:
+      - "apps/api/**"
+      - ".github/workflows/deploy-api-cf-worker.yml"
     branches:
       - main
   workflow_dispatch:

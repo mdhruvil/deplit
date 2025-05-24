@@ -2,6 +2,9 @@ name: (BUILDER):create and publish docker image
 
 on:
   push:
+    paths:
+      - "apps/builder/**"
+      - ".github/workflows/publish-builder-image.yml"
     branches:
       - main
   workflow_dispatch:

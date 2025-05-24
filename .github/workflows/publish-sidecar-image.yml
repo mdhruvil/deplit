@@ -2,6 +2,9 @@ name: (SIDECAR):create and publish docker image
 
 on:
   push:
+    paths:
+      - "apps/sidecar/**"
+      - ".github/workflows/publish-sidecar-image.yml"
     branches:
       - main
   workflow_dispatch:
