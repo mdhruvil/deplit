@@ -1,5 +1,5 @@
-import { DBDeployments } from "../db/queries/deployments";
 import { env } from "cloudflare:workers";
+import { DBDeployments } from "../db/queries/deployments";
 
 export async function createDeploymentAndScheduleIt(args: {
   projectId: string;
@@ -61,5 +61,6 @@ export async function createDeploymentAndScheduleIt(args: {
 
   const responseBody = await response.text();
   console.log("Response from Azure:", responseBody);
+
   return true;
 }

@@ -1,6 +1,7 @@
 import { EmitterWebhookEvent } from "@octokit/webhooks";
 import { DBProjects } from "../db/queries/projects";
 import { createDeploymentAndScheduleIt } from "./schedule-build";
+import { posthog } from "./posthog";
 
 /**
  * Extracts the branch name from a Git ref string if it represents a branch.
@@ -34,6 +35,18 @@ export async function handleGithubPushEvent(
   const projects = await DBProjects.findByFullName(
     payload.repository.full_name,
   );
+
+  posthog.capture({
+    distinctId: "github-webhook",
+    event: "github push event",
+    properties: {
+      repositoryFullName: payload.repository.full_name,
+      projects: projects.map((p) => p.name),
+      projectsCount: projects.length,
+      branch: getBranchNameFromRef(payload.ref),
+      gitCommitSha: payload.after,
+    },
+  });
 
   if (!projects || projects.length === 0) {
     console.log("No projects found for this repository");
@@ -72,6 +85,20 @@ export async function handleGithubPushEvent(
         ? `${project.slug}.deplit.tech`
         : `${project.slug}-${lastCommitSha.slice(0, 7)}.deplit.tech`,
       target: isProduction ? "PRODUCTION" : "PREVIEW",
+    });
+
+    posthog.capture({
+      distinctId: "github-webhook",
+      event: "deployment scheduled",
+      properties: {
+        projectId: project.id,
+        gitRef: pushedBranchName,
+        gitCommitHash: lastCommitSha,
+        target: isProduction ? "PRODUCTION" : "PREVIEW",
+        alias: isProduction
+          ? `${project.slug}.deplit.tech`
+          : `${project.slug}-${lastCommitSha.slice(0, 7)}.deplit.tech`,
+      },
     });
 
     console.log("Scheduled deployment", scheduleStatus);

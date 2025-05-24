@@ -6,6 +6,7 @@ import { z } from "zod";
 import { DBDeployments } from "../db/queries/deployments";
 import { notFound } from "../utils";
 import { invalidateCacheByTag } from "../lib/postbuild";
+import { posthog } from "../lib/posthog";
 
 const updateBuildStatusSchema = z.object({
   status: z.enum(["SUCCESS", "ERROR", "BUILDING"]),
@@ -125,6 +126,17 @@ const app = new Hono()
             ? "ACTIVE"
             : "NA",
       });
+
+      if (status === "ERROR") {
+        posthog.capture({
+          distinctId: "sidecar-webhook",
+          event: "deployment build error",
+          properties: {
+            deploymentId,
+            projectId,
+          },
+        });
+      }
       return c.json({ success: true, message: "Build status updated" });
     },
   )

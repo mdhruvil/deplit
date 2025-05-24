@@ -1,6 +1,7 @@
 import { createMiddleware } from "hono/factory";
 import { Env } from "..";
 import { auth } from "../lib/auth";
+import { posthog } from "../lib/posthog";
 
 export const authMiddleware = createMiddleware<Env>(async (c, next) => {
   const session = await auth.api.getSession({ headers: c.req.raw.headers });
@@ -24,5 +25,13 @@ export const authMiddleware = createMiddleware<Env>(async (c, next) => {
 
   c.set("user", session.user);
   c.set("session", session.session);
+  posthog.identify({
+    distinctId: session.user.id,
+    properties: {
+      email: session.user.email,
+      name: session.user.name,
+      emailVerified: session.user.emailVerified,
+    },
+  });
   return next();
 });

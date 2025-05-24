@@ -4,6 +4,7 @@ import { Hono } from "hono";
 import { HTTPException } from "hono/http-exception";
 import { Env } from "..";
 import { handleGithubPushEvent } from "../lib/github-webhook";
+import { posthog } from "../lib/posthog";
 
 const app = new Hono<Env>().post("/webhook", async (c) => {
   const signature = c.req.raw.headers.get("x-hub-signature-256");

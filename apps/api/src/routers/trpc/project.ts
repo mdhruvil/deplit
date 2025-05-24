@@ -9,16 +9,21 @@ import { createDeploymentAndScheduleIt } from "../../lib/schedule-build";
 import { DBDeployments } from "../../db/queries/deployments";
 import { env } from "cloudflare:workers";
 import { invalidateCacheByTag } from "../../lib/postbuild";
+import { posthog } from "../../lib/posthog";
 
 export const projectRouter = router({
   getAll: protectedProcedure.query(async ({ ctx }) => {
+    posthog.capture({
+      distinctId: ctx.user.id,
+      event: "project get all",
+    });
     const projects = await DBProjects.findAll(ctx.user.id);
     return projects;
   }),
 
   getById: protectedProcedure
     .input(z.object({ projectId: z.string().uuid() }))
-    .query(async ({ input }) => {
+    .query(async ({ input, ctx }) => {
       const project = await DBProjects.findById(input.projectId);
       if (!project) {
         throw new TRPCError({
@@ -26,6 +31,14 @@ export const projectRouter = router({
           message: "Project not found",
         });
       }
+      posthog.capture({
+        distinctId: ctx.user.id,
+        event: "project get by id",
+        properties: {
+          projectId: project.id,
+          projectName: project.name,
+        },
+      });
       return project;
     }),
 
@@ -36,7 +49,7 @@ export const projectRouter = router({
         deploymentId: z.string().uuid(),
       }),
     )
-    .mutation(async ({ input }) => {
+    .mutation(async ({ input, ctx }) => {
       const { projectId, deploymentId } = input;
       const deployment = await DBDeployments.findById(deploymentId, projectId);
       if (!deployment) {
@@ -82,6 +95,16 @@ export const projectRouter = router({
         htmlRoutes,
       };
       await env.SITES.put(subdomain, JSON.stringify(data));
+
+      posthog.capture({
+        distinctId: ctx.user.id,
+        event: "project instant rollback",
+        properties: {
+          projectId: deployment.projectId,
+          deploymentId: deployment.id,
+          commitHash: deployment.gitCommitHash,
+        },
+      });
     }),
 
   create: protectedProcedure
@@ -123,6 +146,15 @@ export const projectRouter = router({
         },
       );
 
+      posthog.capture({
+        distinctId: ctx.user.id,
+        event: "project create",
+        properties: {
+          projectId: result.id,
+          projectName: result.name,
+        },
+      });
+
       const deploymentResult = await createDeploymentAndScheduleIt({
         projectId: result.id,
         githubUrl: `https://github.com/${input.fullName}`,
@@ -136,6 +168,17 @@ export const projectRouter = router({
         gitCommitTimestamp: new Date(
           lastCommit.commit.author?.date ?? Date.now(),
         ),
+      });
+      posthog.capture({
+        distinctId: ctx.user.id,
+        event: "deployment scheduled",
+        properties: {
+          projectId: result.id,
+          gitRef: input.defaultBranch,
+          gitCommitHash: lastCommit.sha,
+          target: "PRODUCTION",
+          alias: `${result.slug}.deplit.tech`,
+        },
       });
       console.log("Deployment scheduled:", deploymentResult);
       return result;

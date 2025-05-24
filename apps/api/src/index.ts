@@ -12,6 +12,7 @@ import { sidecarRouter } from "./routers/sidecar";
 import { appRouter } from "./routers/trpc/app-router";
 import { createTRPCContext } from "./trpc";
 import { notFound } from "./utils";
+import { posthog } from "./lib/posthog";
 
 export type Env = {
   Variables: {
@@ -22,7 +23,15 @@ export type Env = {
 
 const app = new Hono<Env>({ strict: false })
   .basePath("/api")
-  .use(logger(console.log))
+  .use("*", async (c, next) => {
+    await next();
+    // this will ensure that the PostHog client is properly shut down
+    c.executionCtx.waitUntil(
+      posthog.shutdown().catch((error) => {
+        console.error("Error shutting down PostHog:", error);
+      }),
+    );
+  })
   .use(
     "*",
     cors({
@@ -58,13 +67,37 @@ const app = new Hono<Env>({ strict: false })
       req: c.req.raw,
       router: appRouter,
       createContext: createTRPCContext(c),
+      onError: (ctx) => {
+        const { error, path, type, input } = ctx;
+        console.error("TRPC Error:", error);
+        posthog.captureException(error.message, c.get("user")?.id, {
+          path,
+          type,
+          input: JSON.stringify(input),
+        });
+        c.executionCtx.waitUntil(
+          posthog.shutdown().catch((error) => {
+            console.error("Error shutting down PostHog:", error);
+          }),
+        );
+      },
     });
   })
   .notFound((c) => {
     return notFound(c, "Not Found. path: " + c.req.path);
   })
-  .onError((err, c) => {
+  .onError(async (err, c) => {
     console.error(err);
+    const userId = c.get("user")?.id;
+    posthog.captureException(err, userId, {
+      pathname: c.req.path,
+      method: c.req.method,
+    });
+    c.executionCtx.waitUntil(
+      posthog.shutdown().catch((error) => {
+        console.error("Error shutting down PostHog:", error);
+      }),
+    );
     if (err instanceof HTTPException) {
       return c.json({ success: false, error: err.message }, err.status);
     } else {
