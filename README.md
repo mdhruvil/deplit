@@ -6,6 +6,8 @@ Deplit is my attempt to create Vercel from scratch. I have been using Vercel and
 
 The blog [Behind the scenes of Vercel's infrastructure](https://vercel.com/blog/behind-the-scenes-of-vercels-infrastructure) was very helpful in understaing how vercel actually works under the hood.
 
+YouTube video showcasing deplit: [https://www.youtube.com/watch?v=a4w8_rXajl4](https://www.youtube.com/watch?v=a4w8_rXajl4)
+
 ## 🌟 Features
 
 - ⚡ **Instant Rollback** - One-click rollback to previous deployments
