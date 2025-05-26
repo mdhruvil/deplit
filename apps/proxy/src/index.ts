@@ -44,7 +44,7 @@ export default {
           headers: {
             "Content-Type": "application/json",
             // TODO: change cacheTtl to 1 year
-            "Cache-Control": "public, max-age=86400, s-maxage=86400",
+            "Cache-Control": "public, max-age=31536000, s-maxage=31536000",
             "Cache-Tag": `site:${subdomain}`,
           },
         });
@@ -97,9 +97,8 @@ export default {
       let response = await fetch(url, {
         cf: {
           // Always cache this fetch regardless of content type
-          // for a max of 24 hours before revalidating the resource
-          // TODO: change cacheTtl to 1 year
-          cacheTtl: 24 * 60 * 60,
+          // for a max of 1 year before revalidating the resource
+          cacheTtl: 24 * 60 * 60 * 365,
           cacheEverything: true,
         },
       });
