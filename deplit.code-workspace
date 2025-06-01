@@ -1,0 +1,16 @@
+{
+  "folders": [
+    {
+      "path": ".",
+    },
+    {
+      "path": "../deplit-spawner",
+    },
+  ],
+  "settings": {
+    "files.associations": {
+      "wrangler.json": "jsonc",
+    },
+    "debug.internalConsoleOptions": "neverOpen",
+  },
+}
