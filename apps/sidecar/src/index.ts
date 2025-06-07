@@ -55,15 +55,17 @@ const app = new Hono()
     async (c) => {
       const { status, message } = c.req.valid("json");
       if (status === "SUCCESS" || status === "ERROR") {
-        setTimeout(async () => {
-          if (logs.length > 0) {
-            await backendApiClient.saveLogs({
-              deploymentId,
-              logs,
-            });
-            console.log("Backend API successfully updated with logs.");
-          }
-        }, 3000);
+        await new Promise((resolve) => {
+          // Simulate a delay to ensure logs are processed before updating the build status
+          setTimeout(resolve, 3000);
+        });
+        if (logs.length > 0) {
+          await backendApiClient.saveLogs({
+            deploymentId,
+            logs,
+          });
+          console.log("Backend API successfully updated with logs.");
+        }
       }
 
       await backendApiClient.updateBuildStatus({
