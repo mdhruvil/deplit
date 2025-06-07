@@ -4,8 +4,8 @@
 	"private": true,
 	"scripts": {
 		"deploy": "wrangler deploy",
-		"dev": "wrangler dev",
-		"start": "wrangler dev",
+		"dev": "wrangler dev --persist-to='../api/.wrangler/state'",
+		"start": "wrangler dev --persist-to='../api/.wrangler/state'",
 		"cf-typegen": "wrangler types",
 		"lint": "eslint .",
 		"typecheck": "tsc --noEmit"

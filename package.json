@@ -2,13 +2,16 @@
   "name": "deplit",
   "private": true,
   "scripts": {
+    "azurite": "azurite --oauth basic --cert ./certs/127.0.0.1+1.pem --key ./certs/127.0.0.1+1-key.pem --location ./azurite --debug ./azurite/azurite-debug.log",
     "build": "turbo build",
-    "dev:web": "turbo dev --filter @deplit/controlplane --filter @deplit/api",
+    "dev:web": "turbo //#azurite db:studio:local dev --filter @deplit/controlplane --filter @deplit/api",
     "lint": "turbo lint",
     "typecheck": "turbo typecheck",
-    "format": "prettier --write \"**/*.{ts,tsx,md}\""
+    "format": "prettier --write \"**/*.{ts,tsx,md}\"",
+    "certs": "mkcert 127.0.0.1 host.docker.internal"
   },
   "devDependencies": {
+    "azurite": "^3.34.0",
     "prettier": "^3.5.3",
     "turbo": "^2.5.2",
     "typescript": "5.7.3"

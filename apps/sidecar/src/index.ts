@@ -42,9 +42,6 @@ const app = new Hono()
   })
   .post("/logs/ingest", zValidator("json", ingestLogsSchema), async (c) => {
     const body = c.req.valid("json");
-    console.log(
-      `${body.timestamp.toISOString()} [${body.level.toUpperCase()}]: ${body.message}`,
-    );
 
     await backendApiClient.ingestLogs({ ...body, deploymentId });
 
@@ -57,13 +54,16 @@ const app = new Hono()
     zValidator("json", updateBuildStatusSchema),
     async (c) => {
       const { status, message } = c.req.valid("json");
-      await new Promise((resolve) => setTimeout(resolve, 3000));
-      if (logs.length > 0) {
-        await backendApiClient.saveLogs({
-          deploymentId,
-          logs,
-        });
-        console.log("Backend API successfully updated with logs.");
+      if (status === "SUCCESS" || status === "ERROR") {
+        setTimeout(async () => {
+          if (logs.length > 0) {
+            await backendApiClient.saveLogs({
+              deploymentId,
+              logs,
+            });
+            console.log("Backend API successfully updated with logs.");
+          }
+        }, 3000);
       }
 
       await backendApiClient.updateBuildStatus({
@@ -90,7 +90,7 @@ const app = new Hono()
     return c.json({ ok: true });
   })
   .onError((err, c) => {
-    console.error(err);
+    console.dir(err, { depth: null });
     return c.json(
       {
         ok: false,
