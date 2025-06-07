@@ -2,6 +2,7 @@ import { cn } from "@/lib/utils";
 import { trpc } from "@/router";
 import { useQuery } from "@tanstack/react-query";
 import { Error } from "./error";
+import { ScrollArea, ScrollBar } from "./ui/scroll-area";
 
 export function LogViewerWithPolling({
   deploymentId,
@@ -56,16 +57,19 @@ export function LogViewer({
     return <Error message={error?.message} />;
   }
   return (
-    <div className="h-150 overflow-auto font-mono leading-normal">
+    <ScrollArea className="h-150 font-mono leading-normal">
       {data.length === 0 && (
         <div className="flex h-full items-center justify-center">
           <p className="text-gray-500">No logs available</p>
         </div>
       )}
-      {data.map((log, index) => (
-        <LogLine key={index} log={log} />
-      ))}
-    </div>
+      <div className="py-2">
+        {data.map((log, index) => (
+          <LogLine key={index} log={log} />
+        ))}
+      </div>
+      <ScrollBar orientation="horizontal" />
+    </ScrollArea>
   );
 }
 
@@ -90,7 +94,7 @@ function LogLine({
       )}
     >
       <p className="select-none">{new Date(log.timestamp).toISOString()}</p>
-      <p>{log.message}</p>
+      <pre>{log.message}</pre>
     </div>
   );
 }

@@ -44,6 +44,8 @@ logs
 __blobstorage__
 __queuestorage__
 __azurite_db*__.json
+azurite-debug.log
+AzuriteConfig
 
 # all sqlite dbs
 *.sqlite

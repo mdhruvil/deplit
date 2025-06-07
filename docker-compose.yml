@@ -1,0 +1,56 @@
+# this is only used for local development and testing
+# DO NOT use this in production
+
+services:
+  builder:
+    build:
+      context: .
+      dockerfile: apps/builder/Dockerfile
+    network_mode: host
+    volumes:
+      - ./certs:/app/certs:ro
+    environment:
+      # Git repository configuration
+      - DEPLIT_REPO_URL=${DEPLIT_REPO_URL}
+      - DEPLIT_BRANCH=${DEPLIT_BRANCH:-main}
+      - DEPLIT_GIT_COMMIT_SHA=${DEPLIT_GIT_COMMIT_SHA}
+
+      # Project and deployment IDs
+      - DEPLIT_PROJECT_ID=${DEPLIT_PROJECT_ID}
+      - DEPLIT_DEPLOYMENT_ID=${DEPLIT_DEPLOYMENT_ID}
+
+      # Directory configuration
+      - DEPLIT_WORK_DIR=${DEPLIT_WORK_DIR:-/deplit/workspace}
+      - DEPLIT_OUTPUT_DIR=${DEPLIT_OUTPUT_DIR:-/deplit/out}
+      - DEPLIT_LOG_FILE_DEST=${DEPLIT_LOG_FILE_DEST:-/deplit/logs/build.log}
+
+      # Environment and networking
+      - NODE_ENV=${NODE_ENV:-development}
+      - DEPLIT_SIDECAR_PORT=${DEPLIT_SIDECAR_PORT:-9090}
+
+      # SSL/TLS configuration for development
+      - NODE_TLS_REJECT_UNAUTHORIZED=0
+      - NODE_EXTRA_CA_CERTS=/app/certs/127.0.0.1+1.pem
+
+      # Security token
+      - DEPLIT_INTERNAL_SIDECAR_TOKEN=${DEPLIT_INTERNAL_SIDECAR_TOKEN}
+
+  sidecar:
+    build:
+      context: .
+      dockerfile: apps/sidecar/Dockerfile
+    network_mode: host
+    environment:
+      # API tokens and security
+      - DEPLIT_INTERNAL_API_TOKEN=${DEPLIT_INTERNAL_API_TOKEN}
+      - DEPLIT_API_SIDECAR_KEY=${DEPLIT_API_SIDECAR_KEY}
+
+      # Backend API configuration
+      - DEPLIT_BACKEND_API_URL=${DEPLIT_BACKEND_API_URL}
+
+      # Project and deployment IDs
+      - DEPLIT_DEPLOYMENT_ID=${DEPLIT_DEPLOYMENT_ID}
+      - DEPLIT_PROJECT_ID=${DEPLIT_PROJECT_ID}
+
+      # Node environment
+      - NODE_ENV=${NODE_ENV:-development}

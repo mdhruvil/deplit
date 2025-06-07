@@ -1,3 +1,4 @@
+import { env } from "cloudflare:workers";
 import { PostHog } from "posthog-node";
 
 // https://posthog.com/docs/product-analytics/troubleshooting#is-it-ok-for-my-api-key-to-be-exposed-and-public
@@ -6,5 +7,6 @@ export const posthog = new PostHog(
   "phc_UPdNPQ9L5IfsRgPI6HlHiP4npmngdn05X4ftv8Gja1r",
   {
     host: "https://us.i.posthog.com",
+    disabled: env.NODE_ENV === "development",
   },
 );

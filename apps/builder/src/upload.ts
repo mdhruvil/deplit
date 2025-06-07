@@ -1,5 +1,9 @@
 import { DefaultAzureCredential } from "@azure/identity";
-import { BlobServiceClient, ContainerClient } from "@azure/storage-blob";
+import {
+  BlobServiceClient,
+  ContainerClient,
+  StorageSharedKeyCredential,
+} from "@azure/storage-blob";
 import { logger } from "./utils/loggers.js";
 import fs from "fs/promises";
 import { createReadStream } from "fs";
@@ -9,10 +13,21 @@ import { gitCommitSha, projectId } from "./index.js";
 
 const accountName = "deplit";
 
-const blobServiceClient = new BlobServiceClient(
-  `https://${accountName}.blob.core.windows.net`,
-  new DefaultAzureCredential(),
-);
+const blobUrl =
+  process.env.NODE_ENV === "development"
+    ? //This used in local development with Azurite
+      "https://host.docker.internal:10000/devstoreaccount1"
+    : `https://${accountName}.blob.core.windows.net`;
+
+const creds =
+  process.env.NODE_ENV === "development"
+    ? new StorageSharedKeyCredential(
+        "devstoreaccount1",
+        "Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==",
+      )
+    : new DefaultAzureCredential();
+
+const blobServiceClient = new BlobServiceClient(blobUrl, creds);
 
 /**
  * Ensures that a blob storage container for the current project exists, creating it if necessary.
@@ -53,10 +68,6 @@ export async function uploadDirRecursively({
   localCurrentDirPath,
   localBaseDirPath = localCurrentDirPath,
 }: UploadDirRecursivelyArgs) {
-  if (process.env.NODE_ENV === "development") {
-    logger.local("Skipping upload in test mode");
-    return;
-  }
   const containerClient =
     globalContainerClient ??
     (globalContainerClient = await createContainerIfNotExists());

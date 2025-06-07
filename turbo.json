@@ -39,7 +39,11 @@
       "cache": false,
       "persistent": true
     },
-    "db:studio": {
+    "//#azurite": {
+      "cache": false,
+      "persistent": true
+    },
+    "db:studio:local": {
       "cache": false,
       "persistent": true
     }
