@@ -1,5 +1,4 @@
-import { env } from "cloudflare:workers";
-import { App, Octokit } from "octokit";
+import { Octokit } from "octokit";
 
 /**
  * Retrieves all GitHub repositories accessible to the authenticated user via their GitHub App installations.
@@ -12,8 +11,6 @@ export async function getCurrentUserRepos(accessToken: string) {
     // Create authenticated Octokit instance with user's access token
     const octokit = new Octokit({ auth: accessToken });
 
-    console.log("Access token:", accessToken);
-
     // Get the user's GitHub App installations
     const installationsResponse = await octokit.rest.apps
       .listInstallationsForAuthenticatedUser()
@@ -23,7 +20,6 @@ export async function getCurrentUserRepos(accessToken: string) {
       });
 
     const { installations } = installationsResponse.data;
-    console.log("Installations response:", installations);
 
     if (!installations || installations.length === 0) {
       // Return empty array if no installations found
