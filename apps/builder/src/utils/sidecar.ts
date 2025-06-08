@@ -13,11 +13,6 @@ export interface ProjectDetails {
   githubAccessToken: string | null;
 }
 
-export interface GitAuthCredentials {
-  username: string;
-  password: string;
-}
-
 export class Sidecar {
   constructor(
     private port: string,
