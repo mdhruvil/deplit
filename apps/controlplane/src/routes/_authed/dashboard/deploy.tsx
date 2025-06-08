@@ -78,6 +78,7 @@ function DeployComponent() {
   const router = useRouter();
 
   const form = useForm<z.infer<typeof formSchema>>({
+    // @ts-expect-error Type Instantiation is excessively deep and possibly infinite.
     resolver: hookformZodResolver(formSchema),
     defaultValues: {
       name: repo,

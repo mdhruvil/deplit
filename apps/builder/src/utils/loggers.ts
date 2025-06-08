@@ -99,3 +99,40 @@ export const logger = winston.createLogger({
     }),
   ],
 });
+
+/**
+ * Converts an object into a table-formatted string.
+ * thank you chatgpt :)
+ * @param obj Record where key and value are both strings
+ * @param keyLabel Optional custom header for the 'key' column
+ * @param valLabel Optional custom header for the 'value' column
+ * @returns A multi-line string you can log
+ */
+export function makeTable(
+  obj: Record<string, string>,
+  keyLabel = "Key",
+  valLabel = "Value",
+): string {
+  const entries = Object.entries(obj);
+  const keyColWidth = Math.max(
+    keyLabel.length,
+    ...entries.map(([k]) => k.length),
+  );
+  const valColWidth = Math.max(
+    valLabel.length,
+    ...entries.map(([, v]) => v.length),
+  );
+
+  const pad = (s: string, width: number, alignLeft = true) =>
+    alignLeft ? s.padEnd(width) : s.padStart(width);
+
+  const sep = `+-${"-".repeat(keyColWidth)}-+-${"-".repeat(valColWidth)}-+`;
+
+  const header = `| ${pad(keyLabel, keyColWidth)} | ${pad(valLabel, valColWidth)} |`;
+
+  const rows = entries.map(
+    ([k, v]) => `| ${pad(k, keyColWidth)} | ${pad(v, valColWidth)} |`,
+  );
+
+  return [sep, header, sep, ...rows, sep].join("\n");
+}

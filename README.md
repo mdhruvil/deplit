@@ -7,6 +7,7 @@ Deplit is my attempt to create Vercel from scratch. I have been using Vercel and
 The blog [Behind the scenes of Vercel's infrastructure](https://vercel.com/blog/behind-the-scenes-of-vercels-infrastructure) was very helpful in understaing how vercel actually works under the hood.
 
 Blog Post on Deplit's technical details: [https://mdhruvil.github.io/blog/deplit/](https://mdhruvil.github.io/blog/deplit/)
+
 YouTube video showcasing deplit: [https://www.youtube.com/watch?v=a4w8_rXajl4](https://www.youtube.com/watch?v=a4w8_rXajl4)
 
 ## 🌟 Features
@@ -16,6 +17,7 @@ YouTube video showcasing deplit: [https://www.youtube.com/watch?v=a4w8_rXajl4](h
 - 🌐 **Global CDN** - Serve your site from nearest to your users
 - 🚀 **Instant Automatic Deployments** - Push to GitHub, get instant deployments
 - 🔗 **Subdomains** - Free `.deplit.tech` subdomains for all projects
+- 🔒️ **Private Repo** - Deploy from your private repositories
 - 📊 **Build Logs** - Real-time build monitoring and detailed logs
 - 💻️ **Serverless Function** _(Soon)_ - Deploy your SSR or ISR apps to deplit
 

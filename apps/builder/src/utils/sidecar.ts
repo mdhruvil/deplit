@@ -1,5 +1,23 @@
 import { RouteMetadata } from "../postprocess.js";
 
+export interface ProjectDetails {
+  project: {
+    id: string;
+    name: string;
+    fullName: string;
+    githubUrl: string;
+    framework: string | null;
+    isSPA: boolean;
+    envVars: Record<string, string> | null;
+  };
+  githubAccessToken: string | null;
+}
+
+export interface GitAuthCredentials {
+  username: string;
+  password: string;
+}
+
 export class Sidecar {
   constructor(
     private port: string,
@@ -111,6 +129,13 @@ export class Sidecar {
       headers: {
         "Content-Type": "application/json",
       },
+    });
+    return response;
+  }
+
+  async getProjectDetails(): Promise<ProjectDetails> {
+    const response = await this.$fetch("/project", {
+      method: "GET",
     });
     return response;
   }

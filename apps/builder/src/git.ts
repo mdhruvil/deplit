@@ -7,6 +7,7 @@ type CloneRepoArgs = {
   dest: string;
   ref?: string;
   commitSha: string;
+  githubAccessToken?: string | null;
 };
 
 /**
@@ -19,9 +20,13 @@ type CloneRepoArgs = {
  * @param ref - An optional Git reference to fetch from the remote.
  * @param commitSha - The commit SHA to check out after fetching.
  */
-export async function cloneRepo({ url, dest, ref, commitSha }: CloneRepoArgs) {
-  console.log("Cloning repo", { url, dest, ref, commitSha });
-
+export async function cloneRepo({
+  url,
+  dest,
+  ref,
+  commitSha,
+  githubAccessToken,
+}: CloneRepoArgs) {
   await git.init({
     fs,
     dir: dest,
@@ -41,6 +46,18 @@ export async function cloneRepo({ url, dest, ref, commitSha }: CloneRepoArgs) {
     remote: "origin",
     url,
     ref,
+    onAuth: () => {
+      if (!githubAccessToken) {
+        console.warn(
+          "No GitHub access token provided. Authentication will not be performed.",
+        );
+        return undefined;
+      }
+      return {
+        username: "x-access-token",
+        password: githubAccessToken,
+      };
+    },
   });
 
   await git.checkout({

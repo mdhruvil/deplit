@@ -22,3 +22,21 @@ export const metadataSchema = z.object({
   assetsRoutes: z.array(routeMetadataSchema),
   buildDurationMs: z.number(),
 });
+
+export const projectDetailsRequestSchema = z.object({
+  deploymentId: z.string(),
+  projectId: z.string(),
+});
+
+export const projectDetailsResponseSchema = z.object({
+  project: z.object({
+    id: z.string(),
+    name: z.string(),
+    fullName: z.string(),
+    githubUrl: z.string(),
+    framework: z.string().nullable(),
+    isSPA: z.boolean(),
+    envVars: z.record(z.string()).nullable(),
+  }),
+  githubAccessToken: z.string().nullable(),
+});
