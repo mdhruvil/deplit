@@ -84,6 +84,14 @@ const app = new Hono()
     console.log("Backend API successfully updated with metadata.");
     return c.json({ ok: true });
   })
+  .get("/project", async (c) => {
+    const projectDetails = await backendApiClient.getProjectDetails({
+      deploymentId,
+      projectId,
+    });
+    console.log("Backend API successfully retrieved project details.");
+    return c.json(projectDetails);
+  })
   .post("/exit", async (c) => {
     // this endpoint is used to exit the sidecar after finishing the build process so that the azure container apps jobs can be terminated
     setTimeout(() => {

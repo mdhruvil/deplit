@@ -195,32 +195,17 @@ function RepoCard({ repo }: RepoCardProps) {
         </div>
       </div>
 
-      {repo.visibility === "public" ? (
-        <Link
-          className={buttonVariants({ size: "sm" })}
-          to="/dashboard/deploy"
-          search={{
-            owner: repo.full_name.split("/")[0] ?? "",
-            repo: repo.full_name.split("/")[1] ?? "",
-            defaultBranch: repo.default_branch,
-          }}
-        >
-          Deploy
-        </Link>
-      ) : (
-        <TooltipProvider>
-          <Tooltip delayDuration={0}>
-            <TooltipTrigger>
-              <Button size="sm" className="cursor-not-allowed">
-                Deploy
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent className="dark">
-              <p>Private repositories are not supported yet.</p>
-            </TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
-      )}
+      <Link
+        className={buttonVariants({ size: "sm" })}
+        to="/dashboard/deploy"
+        search={{
+          owner: repo.full_name.split("/")[0] ?? "",
+          repo: repo.full_name.split("/")[1] ?? "",
+          defaultBranch: repo.default_branch,
+        }}
+      >
+        Deploy
+      </Link>
     </div>
   );
 }

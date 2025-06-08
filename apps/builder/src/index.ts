@@ -7,7 +7,7 @@ import {
 } from "./build.js";
 import { cloneRepo } from "./git.js";
 import { mapUrlToFilePath, prepareMetadataForRoutes } from "./postprocess.js";
-import { logger } from "./utils/loggers.js";
+import { logger, makeTable } from "./utils/loggers.js";
 import { uploadDirRecursively } from "./upload.js";
 import { Sidecar } from "./utils/sidecar.js";
 
@@ -73,12 +73,26 @@ async function main() {
   await sidecar.updateBuildStatus("BUILDING", "Build started.");
 
   const buildStartTime = performance.now();
+
+  logger.info("Getting project details...");
+  const { project, githubAccessToken } = await sidecar.getProjectDetails();
+  const projectDetails = {
+    id: project.id,
+    Name: project.fullName,
+    "Is SPA?": project.isSPA ? "Yes" : "No",
+    "GitHub URL": project.githubUrl,
+  };
+
+  logger.info("Project details:");
+  logger.info(makeTable(projectDetails));
+
   logger.info(`Cloning ${gitUrl} (Branch: ${branch})`);
   await cloneRepo({
     url: gitUrl,
     dest: cloneDest,
     ref: branch,
     commitSha: gitCommitSha,
+    githubAccessToken,
   }).catch((err) => {
     throw new Error("Failed to clone repo.", { cause: err });
   });

@@ -2,6 +2,8 @@ import {
   ingestLogsSchema,
   metadataSchema,
   updateBuildStatusSchema,
+  projectDetailsRequestSchema,
+  projectDetailsResponseSchema,
 } from "./validators.js";
 import { z } from "zod";
 
@@ -20,6 +22,13 @@ export type SaveLogsData = {
   deploymentId: string;
   logs: z.infer<typeof ingestLogsSchema>[];
 };
+
+export type ProjectDetailsRequestData = z.infer<
+  typeof projectDetailsRequestSchema
+>;
+export type ProjectDetailsResponseData = z.infer<
+  typeof projectDetailsResponseSchema
+>;
 
 export class BackendApiClient {
   private baseUrl: string;
@@ -85,6 +94,15 @@ export class BackendApiClient {
 
   async saveLogs(data: SaveLogsData) {
     return this.$fetch("/logs", {
+      method: "POST",
+      body: JSON.stringify(data),
+    });
+  }
+
+  async getProjectDetails(
+    data: ProjectDetailsRequestData,
+  ): Promise<ProjectDetailsResponseData> {
+    return this.$fetch("/project", {
       method: "POST",
       body: JSON.stringify(data),
     });

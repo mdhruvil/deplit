@@ -4,6 +4,8 @@ import { Hono } from "hono";
 import { bearerAuth } from "hono/bearer-auth";
 import { z } from "zod";
 import { DBDeployments } from "../db/queries/deployments";
+import { DBProjects } from "../db/queries/projects";
+import { getAccountFromUserId } from "../lib/auth";
 import { notFound } from "../utils";
 import { invalidateCacheByTag } from "../lib/postbuild";
 import { posthog } from "../lib/posthog";
@@ -33,6 +35,11 @@ const logSchema = z.object({
   level: z.string(),
   message: z.string(),
   timestamp: z.coerce.date(),
+});
+
+const projectDetailsRequestSchema = z.object({
+  deploymentId: z.string(),
+  projectId: z.string(),
 });
 
 const app = new Hono()
@@ -145,6 +152,35 @@ const app = new Hono()
 
     await DBDeployments.update(deploymentId, { metadata, buildDurationMs });
     return c.json({ success: true, message: "Metadata updated" });
-  });
+  })
+  .post(
+    "/project",
+    zValidator("json", projectDetailsRequestSchema),
+    async (c) => {
+      const { projectId } = c.req.valid("json");
+
+      const project = await DBProjects.findById(projectId);
+      if (!project) {
+        return notFound(c, "Project not found");
+      }
+
+      const account = await getAccountFromUserId(project.creatorId);
+
+      const response = {
+        project: {
+          id: project.id,
+          name: project.name,
+          fullName: project.fullName,
+          githubUrl: project.githubUrl,
+          framework: project.framework,
+          isSPA: project.isSPA,
+          envVars: project.envVars,
+        },
+        githubAccessToken: account?.accessToken || null,
+      };
+
+      return c.json(response);
+    },
+  );
 
 export { app as sidecarRouter };
